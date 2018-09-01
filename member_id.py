@@ -2,6 +2,7 @@
 
 import json
 import operator
+import re
 import requests
 
 def main():
@@ -19,7 +20,7 @@ def main():
         elif dict['memberId']==530431:
             member_name='呵呵妹'
         else:
-            member_name=dict['title'].replace('的直播间（回放生成中）','').replace('的电台（回放生成中）','').replace('的（回放生成中）','')
+            member_name=re.match(r'^(.*)的.*（回放生成中）$',dict['title']).group(1)
         members[member_name]=dict['memberId']
     f=open('member_id.json','w')
     f.write(json.dumps(members,indent=2,ensure_ascii=False))
