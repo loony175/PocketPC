@@ -7,9 +7,6 @@ import json
 import re
 import requests
 
-def get_member_id(member_name):
-    return json.loads(open('member_id.json','r').read())[member_name]
-
 def request_process(is_review,last_time,group_id,member_id,limit):
     resp=requests.post('https://plive.48.cn/livesystem/api/live/v1/memberLivePage',headers={'Content-Type':'application/json','version':'5.3.1','os':'android'},json={'lastTime':last_time,'groupId':group_id,'memberId':member_id,'limit':limit}).json()
     if is_review:
@@ -63,9 +60,10 @@ def main():
     add('-n','--sum',action='store_true')
     add('-N','--no-sum',action='store_true')
     args=parser.parse_args()
+    member_ids=json.loads(open('member_id.json','r').read())
     members=None
     if args.member:
-        member_id=get_member_id(args.member)
+        member_id=member_ids[args.member]
     else:
         member_id=0
     if args.limit==0:
@@ -109,7 +107,7 @@ def main():
         members=[]
         for member in member_names:
             try:
-                members.append(get_member_id(member))
+                members.append(member_ids[member])
             except KeyError:
                 pass
     intermediate=request_process(args.review,args.last_time,args.group,member_id,num_request)
