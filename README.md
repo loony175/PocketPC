@@ -54,6 +54,8 @@ optional arguments:
 成珏: 1604111
 ```
 
+来源：<https://github.com/TeamSII/Notes-for-Media-Team/blob/master/TeamSII%E5%90%84yyh%E6%91%A9%E7%82%B9%E8%B4%A6%E5%8F%B7UID%E7%BB%9F%E8%AE%A1.csv>
+
 ## pocket.py
 查询成员口袋直播和录播的信息。
 
