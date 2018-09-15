@@ -50,6 +50,7 @@ optional arguments:
 ```
 
 抖音签名算法来源：<https://github.com/loadchange/amemv-crawler/blob/master/fuck-byted-acrawler.js>
+
 配置文件模板UID来源：<https://github.com/yzlin499/DouYinQuery/blob/master/src/config/memberList.properties>
 
 ## member_id.py
