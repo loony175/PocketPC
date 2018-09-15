@@ -6,6 +6,52 @@ pip install -U -r requirements.txt
 ```
 
 # Usage
+## douyin.py
+查询单个抖音账号中所有视频的信息。
+
+```
+positional arguments:
+  member                      要查询的成员，有效值为指定的配置文件中存在的key。
+
+optional arguments:
+  -c CONFIG, --config CONFIG  要读取的配置文件（YAML格式），默认值为同目录下的 douyin.yml 文件。
+  -q, --quiet                 只输出主要信息。
+  -n, --sum                   只输出实际查询到的数量的值。
+  -N, --no-sum                不输出实际查询到的数量，即实际的输出为标准JSON格式。
+```
+
+配置文件模板：
+```yml
+邱欣怡: 57476731686
+许佳琪: 57825100366
+孙芮: 58050466587
+赵韩倩: 58179134820
+徐晨辰: 58423660275
+冯晓菲: 60304324993
+蒋芸: 60912589230
+吴哲晗: 61360812916
+戴萌: 61363027939
+李宇琪: 62383502337
+潘燕琦: 62792536161
+孔肖吟: 75478657854
+徐伊人: 81404951604
+赵晔: 85714074050
+成珏: 93201175230
+张语格: 93454322158
+袁雨桢: 94405513146
+钱蓓婷: 94481054620
+陈观慧: 95594516797
+袁丹妮: 95917037675
+陈思: 96028160417
+徐子轩: 96293082639
+莫寒: 96585259273
+刘增艳: 97575976658
+吕一: 97775160809
+```
+
+抖音签名算法来源：<https://github.com/loadchange/amemv-crawler/blob/master/fuck-byted-acrawler.js>
+配置文件模板UID来源：<https://github.com/yzlin499/DouYinQuery/blob/master/src/config/memberList.properties>
+
 ## member_id.py
 更新`member_id.json`的脚本。`member_id.json`是一个存储从成员姓名到成员口袋直播间ID的映射关系的JSON文件。
 
@@ -76,6 +122,14 @@ optional arguments:
   -q, --quiet                          只输出主要信息。
   -n, --sum                            只输出实际查询到的数量的值。
   -N, --no-sum                         不输出实际查询到的数量，即实际的输出为标准JSON格式。
+```
+
+## pubed_time.py
+查询单个抖音视频的发布时间。
+
+```
+positional arguments:
+  url  抖音视频URL，有效值为 douyin.py 的输出中 play_addr 的值。
 ```
 
 ## recorder.py
