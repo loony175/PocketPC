@@ -149,6 +149,8 @@ optional arguments:
 
 在录制过程中按`Ctrl + C`即结束录制。
 
+核心代码来源：<https://github.com/zmwangx/caterpillar/blob/master/src/caterpillar/merge.py#L48-L96>
+
 ### Known bugs
 - Windows平台下，如果FFmpeg是通过Chocolatey安装的，那么`subprocess.Popen().terminate()`方法无法终止真正的FFmpeg进程，导致形成僵尸进程。
 
