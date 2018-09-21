@@ -102,7 +102,7 @@ def main():
         elif args.members in ['C','K']:
             args.group=14
             gid=50
-        resp=requests.get('http://h5.snh48.com/resource/jsonp/members.php?gid=%d'%gid).json()
+        resp=requests.get('http://h5.snh48.com/resource/jsonp/members.php',params={'gid':gid}).json()
         member_names=[dict['sname'] for dict in resp['rows'] if dict['tname']==args.members]
         members=[]
         for member in member_names:
