@@ -33,7 +33,7 @@ def main():
     has_more=1
     intermediate=[]
     while has_more==1:
-        resp=requests.get('https://www.amemv.com/aweme/v1/aweme/post/',params={'user_id':str(user_id),'count':'21','max_cursor':str(max_cursor),'aid':'1128','_signature':signature,'dytk':dytk},headers=HEADERS).json()
+        resp=requests.get('https://www.amemv.com/aweme/v1/aweme/post/',params={'user_id':user_id,'count':21,'max_cursor':max_cursor,'aid':1128,'_signature':signature,'dytk':dytk},headers=HEADERS).json()
         for dict in resp['aweme_list']:
             info={}
             share_desc={}
