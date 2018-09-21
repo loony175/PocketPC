@@ -142,6 +142,7 @@ positional arguments:
   group_name                  直播团体，有效值为snh48，bej48，gnz48，shy48，ckg48，1，2，3，4，5（名称和数字一一等价）。
 
 optional arguments:
+  --debug                     调试模式，只输出FFmpeg要连接的主机的详细信息。
   -r REMOTE, --remote REMOTE  转发模式，有效值为一个合法的RTMP地址。在转发模式下，直播流会被转发到指定的RTMP地址。
   -t, --test                  测试模式。在测试模式下，直播流会被丢弃到设备黑洞中，同时传入的 -r 也会无效。
   -c, --convert               结束录制后将录制期间生成的所有ts文件重新封装为mp4文件。

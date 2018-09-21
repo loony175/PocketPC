@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 
 import argparse
+from dns import resolver
 import json
 import pathlib
 import platform
+import random
 import re
+import requests
 import subprocess
 import sys
 import time
+from urllib import parse
 
 def live48(group_name):
     time.sleep(1)
@@ -52,6 +56,7 @@ def main():
     add=parser.add_argument
     add('platform',choices=['48live','bilibili','douyu','youtube','1','2','3','4'])
     add('group_name',choices=['snh48','bej48','gnz48','shy48','ckg48','1','2','3','4','5'])
+    add('--debug',action='store_true')
     add('-r','--remote')
     add('-t','--test',action='store_true')
     add('-c','--convert',action='store_true')
@@ -102,6 +107,27 @@ def main():
                 if args.remote is None:
                     dir.rmdir()
                 sys.exit('Some required tools missing. Run \'pip install -U youtube-dl you-get\' to install them.')
+            if args.debug:
+                host=parse.urlparse(input).hostname
+                ips=[]
+                for line in resolver.query(host,'A').response.answer:
+                    for item in line.items:
+                        try:
+                            ips.append(item.address)
+                        except AttributeError:
+                            pass
+                ip=random.choice(ips)
+                resp=requests.get('https://freeapi.ipip.net/%s'%ip).json()
+                info={}
+                info['host']=host
+                info['ip']=ip
+                info['country']=resp[0]
+                info['province']=resp[1]
+                info['city']=resp[2]
+                info['county']=resp[3]
+                info['idc']=resp[4]
+                dir.rmdir()
+                sys.exit(json.dumps(info,indent=2,ensure_ascii=False))
             if args.remote is None:
                 file=dir/f'{count}.ts'
                 if file.exists():
