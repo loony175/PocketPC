@@ -6,6 +6,17 @@ pip install -U -r requirements.txt
 ```
 
 # Usage
+## Contents
+- [douyin.py](#douyinpy)
+- [member_id.py](#member_idpy)
+- [modian.py](#modianpy)
+- [pocket.py](#pocketpy)
+- [pubed_time.py](#pubed_timepy)
+- [recorder.py](#recorderpy)
+  - [Known bugs](#known-bugs)
+  - [Solutions](#solutions)
+- [stage.py](#stagepy)
+
 ## douyin.py
 查询单个抖音账号中所有视频的信息。
 
