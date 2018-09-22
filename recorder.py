@@ -126,7 +126,8 @@ def main():
                 info['city']=resp[2]
                 info['county']=resp[3]
                 info['idc']=resp[4]
-                dir.rmdir()
+                if args.remote is None:
+                    dir.rmdir()
                 sys.exit(json.dumps(info,indent=2,ensure_ascii=False))
             if args.remote is None:
                 file=dir/f'{count}.ts'
