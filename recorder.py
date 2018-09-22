@@ -108,6 +108,8 @@ def main():
                     dir.rmdir()
                 sys.exit('Some required tools missing. Run \'pip install -U youtube-dl you-get\' to install them.')
             if args.debug:
+                if args.remote is None:
+                    dir.rmdir()
                 host=parse.urlparse(input).hostname
                 ips=[]
                 for line in resolver.query(host,'A').response.answer:
@@ -126,8 +128,6 @@ def main():
                 info['city']=resp[2]
                 info['county']=resp[3]
                 info['idc']=resp[4]
-                if args.remote is None:
-                    dir.rmdir()
                 sys.exit(json.dumps(info,indent=2,ensure_ascii=False))
             if args.remote is None:
                 file=dir/f'{count}.ts'
