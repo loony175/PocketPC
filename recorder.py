@@ -38,7 +38,7 @@ def douyu(group_name):
             break
         except subprocess.CalledProcessError:
             time.sleep(5)
-    return re.findall('https?://.*\.flv[^\']*',data)[0].replace('http://','https://')
+    return re.search('(https?://.*\.flv[^\']*)',data).group(1).replace('http://','https://')
 
 def youtube(group_name):
     id={'snh48':'UClwRU9iNX7UbzyuVzvZTSkA'}
