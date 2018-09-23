@@ -57,6 +57,7 @@ def main():
     add('platform',choices=['48live','bilibili','douyu','youtube','1','2','3','4'])
     add('group_name',choices=['snh48','bej48','gnz48','shy48','ckg48','1','2','3','4','5'])
     add('--debug',action='store_true')
+    add('--log',action='store_true')
     add('-r','--remote')
     add('-t','--test',action='store_true')
     add('-c','--convert',action='store_true')
@@ -79,6 +80,7 @@ def main():
     should_retry=False
     begin_time=int(time.time())
     p=None
+    f=None
     regular_pattern=re.compile('Opening \'.*\' for reading')
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream|st:1 invalid dropping|invalid dropping st:1)')
@@ -111,8 +113,14 @@ def main():
                 if args.remote is None:
                     dir.rmdir()
                 host=parse.urlparse(input).hostname
+                while True:
+                    try:
+                        ans=resolver.query(host,'A').response.answer
+                        break
+                    except dns.resolver.NXDOMAIN:
+                        pass
                 ips=[]
-                for line in resolver.query(host,'A').response.answer:
+                for line in ans:
                     for item in line.items:
                         try:
                             ips.append(item.address)
@@ -134,6 +142,8 @@ def main():
                 if file.exists():
                     count+=1
                 output=dir/f'{count}.ts'
+                if args.log:
+                    log=dir/f'{count}.log'
                 cmd=['ffmpeg','-hide_banner','-y','-i',input,'-c','copy',output.as_posix()]
             else:
                 output=args.remote
@@ -144,10 +154,14 @@ def main():
                 if args.remote is None:
                     dir.rmdir()
                 sys.exit('FFmpeg missing. See details on https://ffmpeg.org/download.html\nAdding FFmpeg to PATH is recommended after downloading it.')
+            if args.remote is None and args.log:
+                f=open(log,'w')
             for line in p.stderr:
                 if not regular_pattern.search(line):
                     sys.stderr.write(line)
                     sys.stderr.flush()
+                    if args.remote is None and args.log:
+                        f.write('%s\n'%line)
                 if method==bilibili and retry_pattern.search(line):
                     should_retry=True
                 if error_pattern.search(line):
@@ -156,16 +170,29 @@ def main():
                         p.terminate()
                         break
             p=None
-            if args.remote is None and output.exists() and output.stat().st_size<=1572864:
-                while True:
-                    try:
-                        output.unlink()
-                        break
-                    except PermissionError:
-                        pass
+            if args.remote is None:
+                if args.log:
+                    f.close()
+                    f=None
+                if output.exists() and output.stat().st_size<=1572864:
+                    while True:
+                        try:
+                            output.unlink()
+                            break
+                        except PermissionError:
+                            pass
+                if args.log and not output.exists():
+                    while True:
+                        try:
+                            log.unlink()
+                            break
+                        except PermissionError:
+                            pass
     except KeyboardInterrupt:
         if p:
             p.terminate()
+        if f:
+            f.close()
         if args.remote is None:
             if len(list(dir.iterdir()))==0:
                 dir.rmdir()

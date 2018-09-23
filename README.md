@@ -154,6 +154,7 @@ positional arguments:
 
 optional arguments:
   --debug                     调试模式，只输出FFmpeg要连接的远程主机的详细信息。
+  --log                       将输出到stdout的内容同时输出到与ts文件同名的log文件中（仅在不传入 -r 或 -t 时有效）。
   -r REMOTE, --remote REMOTE  转发模式，有效值为一个合法的RTMP地址。在转发模式下，直播流会被转发到指定的RTMP地址。
   -t, --test                  测试模式。在测试模式下，直播流会被丢弃到设备黑洞中，同时传入的 -r 也会无效。
   -c, --convert               结束录制后将录制期间生成的所有ts文件重新封装为mp4文件。
