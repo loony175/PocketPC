@@ -161,7 +161,7 @@ def main():
                     sys.stderr.write(line)
                     sys.stderr.flush()
                     if args.remote is None and args.log:
-                        f.write('%s\n'%line)
+                        f.write(line)
                 if method==bilibili and retry_pattern.search(line):
                     should_retry=True
                 if error_pattern.search(line):
