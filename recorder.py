@@ -81,7 +81,7 @@ def main():
     begin_time=int(time.time())
     p=None
     f=None
-    regular_pattern=re.compile('Opening \'.*\' for reading')
+    regular_pattern=re.compile(r'Opening \'.*\' for reading')
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream|st:1 invalid dropping|invalid dropping st:1)')
     if args.remote is None:

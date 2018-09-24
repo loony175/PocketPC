@@ -69,7 +69,7 @@ def main():
     if args.limit==0:
         args.limit=30000
     if args.date:
-        m=re.match('^((?P<year>\d{4})-)?((?P<month>\d{2})-)?(?P<day>\d{2})?$',args.date)
+        m=re.match(r'^((?P<year>\d{4})-)?((?P<month>\d{2})-)?(?P<day>\d{2})?$',args.date)
         now=arrow.now('Asia/Shanghai')
         try:
             year=int(m.group('year') or now.year)
