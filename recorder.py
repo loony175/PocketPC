@@ -13,14 +13,22 @@ import sys
 import time
 from urllib import parse
 
-def live48(group_name):
+def live48(room_id):
     time.sleep(1)
-    id={'snh48':9999,'bej48':2001,'gnz48':3001,'shy48':6001,'ckg48':8001}
-    return 'http://cyflv.ckg48.com/chaoqing/%d.flv'%id[group_name]
+    room_ids={'snh':'9999','bej':'2001','gnz':'3001','shy':'6001','ckg':'8001'}
+    try:
+        room_id_=room_ids[room_id]
+    except KeyError:
+        return
+    return 'http://cyflv.ckg48.com/chaoqing/%s.flv'%room_id_
 
-def bilibili(group_name):
-    id={'snh48':48,'bej48':383045,'gnz48':391199,'shy48':2827401,'ckg48':6015846}
-    cmd=['you-get','--json','https://live.bilibili.com/%d'%id[group_name]]
+def bilibili(room_id):
+    room_ids={'snh':'48','bej':'383045','gnz':'391199','shy':'2827401','ckg':'6015846'}
+    try:
+        room_id_=room_ids[room_id]
+    except KeyError:
+        room_id_=room_id
+    cmd=['you-get','--json','https://live.bilibili.com/%s'%room_id_]
     while True:
         try:
             data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
@@ -29,9 +37,13 @@ def bilibili(group_name):
             pass
     return data['streams']['live']['src'][0]
 
-def douyu(group_name):
-    id={'snh48':56229,'bej48':668687,'gnz48':668530,'shy48':1536837,'ckg48':3532048}
-    cmd=['you-get','--json','https://www.douyu.com/%d'%id[group_name]]
+def douyu(room_id):
+    room_ids={'snh':'56229','bej':'668687','gnz':'668530','shy':'1536837','ckg':'3532048'}
+    try:
+        room_id_=room_ids[room_id]
+    except KeyError:
+        room_id_=room_id
+    cmd=['you-get','--json','https://www.douyu.com/%s'%room_id_]
     while True:
         try:
             data=subprocess.check_output(cmd).decode('utf-8')
@@ -40,9 +52,16 @@ def douyu(group_name):
             time.sleep(5)
     return re.search('(https?://.*\.flv[^\']*)',data).group(1).replace('http://','https://')
 
-def youtube(group_name):
-    id={'snh48':'UClwRU9iNX7UbzyuVzvZTSkA'}
-    cmd=['youtube-dl','-j','https://www.youtube.com/channel/%s/live'%id[group_name]]
+def youtube(room_id):
+    room_ids={'snh':'UClwRU9iNX7UbzyuVzvZTSkA'}
+    try:
+        room_id_=room_ids[room_id]
+    except KeyError:
+        if room_id in ['bej','gnz','shy','ckg']:
+            return
+        else:
+            room_id_=room_id
+    cmd=['youtube-dl','-j','https://www.youtube.com/channel/%s/live'%room_id_]
     while True:
         try:
             data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
@@ -54,8 +73,7 @@ def youtube(group_name):
 def main():
     parser=argparse.ArgumentParser()
     add=parser.add_argument
-    add('platform',choices=['48live','bilibili','douyu','youtube','1','2','3','4'])
-    add('group_name',choices=['snh48','bej48','gnz48','shy48','ckg48','1','2','3','4','5'])
+    add('arguments')
     add('--debug',action='store_true')
     add('--log',action='store_true')
     add('-r','--remote')
@@ -67,15 +85,17 @@ def main():
             args.remote='NUL'
         else:
             args.remote='/dev/null'
-    real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube'}
-    real_group_name={'1':'snh48','2':'bej48','3':'gnz48','4':'shy48','5':'ckg48'}
-    for num in ['1','2','3','4','5']:
-        if args.platform==num:
-            args.platform=real_platform[args.platform]
-        if args.group_name==num:
-            args.group_name=real_group_name[args.group_name]
-    dict={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube}
-    method=dict.get(args.platform)
+    platform_=None
+    method=None
+    args_=args.arguments.split(',')
+    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','1','2','3','4']:
+        platform_=args_[0]
+        room_id=args_[1]
+        if platform_ in ['1','2','3','4']:
+            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube'}
+            platform_=real_platform[platform_]
+        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube}
+        method=methods.get(platform_)
     input=None
     should_retry=False
     begin_time=int(time.time())
@@ -85,30 +105,47 @@ def main():
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream|st:1 invalid dropping|invalid dropping st:1)')
     if args.remote is None:
-        count=1
-        platform_={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube'}
-        group_name={'snh48':'SNH48','bej48':'BEJ48','gnz48':'GNZ48','shy48':'SHY48','ckg48':'CKG48'}
-        dir=pathlib.Path('%d-%s-%s'%(int(time.time()),platform_[args.platform],group_name[args.group_name]))
+        if platform_:
+            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube'}
+            platform_name=platforms[platform_]
+            if room_id in ['snh','bej','gnz','shy','ckg']:
+                room_name='%s48'%room_id.upper()
+            else:
+                room_name=room_id
+        else:
+            url_parser=parse.urlparse(args.arguments)
+            platform_name=url_parser.hostname
+            room_name=pathlib.Path(url_parser.path).stem
+        dir=pathlib.Path('%d-%s-%s'%(int(time.time()),platform_name,room_name))
         dir.mkdir()
+        count=1
     try:
         while True:
             sum_error=0
-            try:
-                if method==bilibili:
-                    if input is None or should_retry:
-                        input=method(args.group_name)
-                        should_retry=False
-                elif method==youtube:
-                    now=int(time.time())
-                    if input is None or now-begin_time>=21600:
-                        input=method(args.group_name)
-                        begin_time=int(time.time())
-                else:
-                    input=method(args.group_name)
-            except FileNotFoundError:
-                if args.remote is None:
-                    dir.rmdir()
-                sys.exit('Some required tools missing. Run \'pip install -U youtube-dl you-get\' to install them.')
+            if platform_:
+                try:
+                    if method==bilibili:
+                        if input is None or should_retry:
+                            input=method(room_id)
+                            should_retry=False
+                    elif method==youtube:
+                        now=int(time.time())
+                        if input is None or now-begin_time>=21600:
+                            input=method(room_id)
+                            begin_time=int(time.time())
+                    else:
+                        input=method(room_id)
+                except FileNotFoundError:
+                    if args.remote is None:
+                        dir.rmdir()
+                    sys.exit('Some required tools missing. Run \'pip install -U youtube-dl you-get\' to install them.')
+                if input is None:
+                    if args.remote is None:
+                        dir.rmdir()
+                    sys.exit('Invalid room ID %s.'%room_id)
+            else:
+                time.sleep(1)
+                input=args.arguments
             if args.debug:
                 if args.remote is None:
                     dir.rmdir()
