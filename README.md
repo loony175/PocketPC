@@ -164,7 +164,7 @@ optional arguments:
 核心代码来源：<https://github.com/zmwangx/caterpillar/blob/master/src/caterpillar/merge.py#L48-L96>
 
 `arguments`的有效值为下列情形之一：
-- `platform``room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，1，2，3，4（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
+- `platform` `room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，1，2，3，4（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
   - `https://live.bilibili.com/48`的`room_id`为`48`。
   - `https://www.douyu.com/56229`的`room_id`为`56229`。
   - `https://www.youtube.com/channel/UClwRU9iNX7UbzyuVzvZTSkA/live`的`room_id`为`UClwRU9iNX7UbzyuVzvZTSkA`。
