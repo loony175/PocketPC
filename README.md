@@ -145,12 +145,11 @@ positional arguments:
 ```
 
 ## recorder.py
-录制公演直播流。
+“不间断”录制视频直播流。
 
 ```
 positional arguments:
-  platform                    直播平台，有效值为48live，bilibili，douyu，youtube，1，2，3，4（名称和数字一一等价）。
-  group_name                  直播团体，有效值为snh48，bej48，gnz48，shy48，ckg48，1，2，3，4，5（名称和数字一一等价）。
+  arguments                   执行本脚本必需的参数。
 
 optional arguments:
   --debug                     调试模式，只输出FFmpeg要连接的远程主机的详细信息。
@@ -163,6 +162,13 @@ optional arguments:
 在录制过程中按`Ctrl + C`即结束录制。
 
 核心代码来源：<https://github.com/zmwangx/caterpillar/blob/master/src/caterpillar/merge.py#L48-L96>
+
+`arguments`的有效值为下列情形之一：
+- `platform``room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，1，2，3，4（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
+  - `https://live.bilibili.com/48`的`room_id`为`48`。
+  - `https://www.douyu.com/56229`的`room_id`为`56229`。
+  - `https://www.youtube.com/channel/UClwRU9iNX7UbzyuVzvZTSkA/live`的`room_id`为`UClwRU9iNX7UbzyuVzvZTSkA`。
+- 一个合法的 RTMP，HLS 或 HTTP-FLV 地址。
 
 ### Known bugs
 - Windows平台下，如果FFmpeg是通过Chocolatey安装的，那么`subprocess.Popen().terminate()`方法无法终止真正的FFmpeg进程，导致形成僵尸进程。
