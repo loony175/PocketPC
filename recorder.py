@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import bs4
 from dns import resolver
 import json
+import logging
 import pathlib
 import platform
 import random
@@ -70,6 +72,28 @@ def youtube(room_id):
             pass
     return data['url']
 
+def yizhibo(room_id):
+    room_ids={'snh':'6009826','bej':'48461479','gnz':'51699551','shy':'186412394','ckg':'275204728'}
+    try:
+        room_id_=room_ids[room_id]
+    except KeyError:
+        room_id_=room_id
+    url=None
+    while True:
+        resp=requests.get('https://www.yizhibo.com/member/personel/user_works',params={'memberid':room_id_}).text
+        item=bs4.BeautifulSoup(resp,'html.parser').find_all('div',class_='index_img fl pr')[0]
+        for child in item.children:
+            if child.name=='div' and child.get_text().strip()=='回放':
+                logging.warning('[Yizhibo] %s not online.'%room_id_)
+                break
+            if child.name=='a':
+                url='https://www.yizhibo.com%s'%child['href']
+        if url:
+            break
+    cmd=['youtube-dl','-j',url]
+    data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
+    return data['url'].replace('http://','https://')
+
 def main():
     parser=argparse.ArgumentParser()
     add=parser.add_argument
@@ -80,6 +104,7 @@ def main():
     add('-t','--test',action='store_true')
     add('-c','--convert',action='store_true')
     args=parser.parse_args()
+    logging.basicConfig(level=logging.WARNING,format='%(levelname)s: %(message)s')
     if args.test:
         if platform.system()=='Windows':
             args.remote='NUL'
@@ -88,13 +113,13 @@ def main():
     platform_=None
     method=None
     args_=args.arguments.split(',')
-    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','1','2','3','4']:
+    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','1','2','3','4','5']:
         platform_=args_[0]
         room_id=args_[1]
-        if platform_ in ['1','2','3','4']:
-            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube'}
+        if platform_ in ['1','2','3','4','5']:
+            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo'}
             platform_=real_platform[platform_]
-        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube}
+        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo}
         method=methods.get(platform_)
     input=None
     should_retry=False
@@ -106,7 +131,7 @@ def main():
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream|st:1 invalid dropping|invalid dropping st:1)')
     if args.remote is None:
         if platform_:
-            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube'}
+            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo'}
             platform_name=platforms[platform_]
             if room_id in ['snh','bej','gnz','shy','ckg']:
                 room_name='%s48'%room_id.upper()
