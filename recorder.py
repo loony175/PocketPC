@@ -80,7 +80,12 @@ def yizhibo(room_id):
         room_id_=room_id
     url=None
     while True:
-        resp=requests.get('https://www.yizhibo.com/member/personel/user_works',params={'memberid':room_id_}).text
+        while True:
+            try:
+                resp=requests.get('https://www.yizhibo.com/member/personel/user_works',params={'memberid':room_id_}).text
+                break
+            except Exception as e:
+                logging.warning('[Yizhibo] %s: %s'%(room_id_,e))
         item=bs4.BeautifulSoup(resp,'html.parser').find_all('div',class_='index_img fl pr')[0]
         for child in item.children:
             if child.name=='div' and child.get_text().strip()=='回放':
