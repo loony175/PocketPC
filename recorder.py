@@ -196,6 +196,7 @@ def main():
                 ip=random.choice(ips)
                 resp=requests.get('https://freeapi.ipip.net/%s'%ip).json()
                 info={}
+                info['url']=input
                 info['host']=host
                 info['ip']=ip
                 info['country']=resp[0]
