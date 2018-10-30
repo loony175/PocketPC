@@ -4,8 +4,10 @@ import argparse
 import arrow
 import base64
 import json
+import pathlib
 import re
 import requests
+from urllib import parse
 
 def request_process(is_review,last_time,group_id,member_id,limit):
     resp=requests.post('https://plive.48.cn/livesystem/api/live/v1/memberLivePage',headers={'Content-Type':'application/json','version':'5.3.1','os':'android'},json={'lastTime':last_time,'groupId':group_id,'memberId':member_id,'limit':limit}).json()
@@ -39,7 +41,7 @@ def filter(intermediate,type,format,members):
     if type:
         intermediate=[dict for dict in intermediate if dict['liveType']==type]
     if format:
-        intermediate=[dict for dict in intermediate if '.%s'%format in dict['streamPath']]
+        intermediate=[dict for dict in intermediate if pathlib.Path(parse.urlparse(dict['streamPath']).path).suffix=='.%s'%format]
     if members:
         intermediate=[dict for dict in intermediate if dict['memberId'] in members]
     return intermediate
