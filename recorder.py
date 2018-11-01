@@ -15,7 +15,7 @@ import sys
 import time
 from urllib import parse
 
-HEADERS={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
+HEADERS={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
 
 def live48(room_id):
     time.sleep(1)
@@ -24,7 +24,7 @@ def live48(room_id):
         room_id_=room_ids[room_id]
     except KeyError:
         return
-    return 'http://cyflv.ckg48.com/chaoqing/%s.flv'%room_id_
+    return 'http://cyflv.ckg48.com/gaoqing/%s.flv'%room_id_
 
 def bilibili(room_id):
     room_ids={'snh':'48','bej':'383045','gnz':'391199','shy':'2827401','ckg':'6015846'}
@@ -127,7 +127,7 @@ def miguvideo(room_id):
         if resp['body']['liveStatus']=='2':
             while True:
                 try:
-                    resp=requests.get(data['content'].replace('http://','https://'),headers=headers).json()
+                    resp=requests.get(data['url_h'].replace('http://','https://'),headers=headers).json()
                     break
                 except Exception as e:
                     logging.warning('[MiguVideo] %s: %s'%(room_id,e))
