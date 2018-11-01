@@ -4,6 +4,11 @@
 ```
 pip install -U -r requirements.txt
 ```
+- [FFmpeg](https://ffmpeg.org/download.html)
+- [Node.js](https://nodejs.org/en/download/current/)
+- [PhantomJS](https://phantomjs.org/download.html)
+- [You-Get](https://pypi.org/project/you-get/)
+- [youtube-dl](https://pypi.org/project/youtube_dl/)
 
 # Usage
 ## Contents
@@ -161,7 +166,7 @@ optional arguments:
 
 在录制过程中按`Ctrl + C`即结束录制。
 
-核心代码来源：<https://github.com/zmwangx/caterpillar/blob/master/src/caterpillar/merge.py#L48-L96>
+核心代码来源：<https://github.com/zmwangx/caterpillar/blob/master/src/caterpillar/merge.py#L43-L114>
 
 `arguments`的有效值为下列情形之一：
 - `platform` `room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，yizhibo，miguvideo，1，2，3，4，5，6（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
