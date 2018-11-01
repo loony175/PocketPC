@@ -109,6 +109,33 @@ def yizhibo(room_id):
     data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
     return data['url'].replace('http://','https://')
 
+def miguvideo(room_id):
+    if room_id in ['snh','bej','gnz','shy','ckg']:
+        return
+    cmd=['phantomjs','miguvideo.js','https://tv.miguvideo.com/#/video/tv/%s'%room_id]
+    while True:
+        data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
+        headers={}
+        for dict in data['headers']:
+            headers[dict['name']]=dict['value']
+        while True:
+            try:
+                resp=requests.get(data['content'].replace('http://','https://'),headers=headers).json()
+                break
+            except Exception as e:
+                logging.warning('[MiguVideo] %s: %s'%(room_id,e))
+        if resp['body']['liveStatus']=='2':
+            while True:
+                try:
+                    resp=requests.get(data['content'].replace('http://','https://'),headers=headers).json()
+                    break
+                except Exception as e:
+                    logging.warning('[MiguVideo] %s: %s'%(room_id,e))
+            return [dict['rateUrl'] for dict in resp['body']['rates'] if dict['rateUrl']!=''][0]
+        else:
+            logging.warning('[MiguVideo] %s not online.'%room_id)
+            time.sleep(5)
+
 def main():
     parser=argparse.ArgumentParser()
     add=parser.add_argument
@@ -128,13 +155,13 @@ def main():
     platform_=None
     method=None
     args_=args.arguments.split(',')
-    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','1','2','3','4','5']:
+    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','miguvideo','1','2','3','4','5','6']:
         platform_=args_[0]
         room_id=args_[1]
-        if platform_ in ['1','2','3','4','5']:
-            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo'}
+        if platform_ in ['1','2','3','4','5','6']:
+            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo','6':'miguvideo'}
             platform_=real_platform[platform_]
-        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo}
+        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo,'miguvideo':miguvideo}
         method=methods.get(platform_)
     input=None
     should_retry=False
@@ -146,7 +173,7 @@ def main():
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream|st:1 invalid dropping|invalid dropping st:1)')
     if args.remote is None:
         if platform_:
-            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo'}
+            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','miguvideo':'MiguVideo'}
             platform_name=platforms[platform_]
             if room_id in ['snh','bej','gnz','shy','ckg']:
                 room_name='%s48'%room_id.upper()
@@ -173,12 +200,21 @@ def main():
                         if input is None or now-begin_time>=21600:
                             input=method(room_id)
                             begin_time=int(time.time())
+                    elif method==miguvideo:
+                        now=int(time.time())
+                        if input is None or now-begin_time>=7200:
+                            input=method(room_id)
+                            begin_time=int(time.time())
                     else:
                         input=method(room_id)
                 except FileNotFoundError:
                     if args.remote is None:
                         dir.rmdir()
-                    sys.exit('Some required tools missing. Run \'pip install -U youtube-dl you-get\' to install them.')
+                    if method==miguvideo:
+                        message='PhantomJS missing. See details on https://phantomjs.org/download.html\nAdding PhantomJS to PATH is recommended after downloading it.'
+                    else:
+                        message='Some required tools missing. Run \'pip install -U you-get youtube-dl\' to install them.'
+                    sys.exit(message)
                 if input is None:
                     if args.remote is None:
                         dir.rmdir()
