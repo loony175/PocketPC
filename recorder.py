@@ -170,7 +170,7 @@ def main():
     f=None
     regular_pattern=re.compile(r'Opening \'.*\' for reading')
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
-    error_pattern=re.compile(r'(Non-monotonous DTS in output stream|st:1 invalid dropping|invalid dropping st:1)')
+    error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|st:1 invalid dropping|invalid dropping st:1)')
     if args.remote is None:
         if platform_:
             platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','miguvideo':'MiguVideo'}
@@ -188,7 +188,6 @@ def main():
         count=1
     try:
         while True:
-            sum_error=0
             if platform_:
                 try:
                     if method==bilibili:
@@ -274,10 +273,8 @@ def main():
                 if method==bilibili and retry_pattern.search(line):
                     should_retry=True
                 if error_pattern.search(line):
-                    sum_error+=1
-                    if sum_error>=2:
-                        p.terminate()
-                        break
+                    p.terminate()
+                    break
             p=None
             if args.remote is None:
                 if args.log:
