@@ -200,11 +200,6 @@ def main():
                         if input is None or now-begin_time>=21600:
                             input=method(room_id)
                             begin_time=int(time.time())
-                    elif method==miguvideo:
-                        now=int(time.time())
-                        if input is None or now-begin_time>=7200:
-                            input=method(room_id)
-                            begin_time=int(time.time())
                     else:
                         input=method(room_id)
                 except FileNotFoundError:
