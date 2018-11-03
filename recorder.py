@@ -52,6 +52,7 @@ def bilibili(room_id):
             return data['playUrlRes']['data']['durl'][0]['url']
         except KeyError:
             logging.warning('[Bilibili] %s not online.'%room_id_)
+            time.sleep(1)
 
 def douyu(room_id):
     room_ids={'snh':'56229','bej':'668687','gnz':'668530','shy':'1536837','ckg':'3532048'}
@@ -109,6 +110,7 @@ def yizhibo(room_id):
                 url='https://www.yizhibo.com%s'%child['href']
         if url:
             break
+        time.sleep(1)
     cmd=['youtube-dl','-j',url]
     data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
     return data['url'].replace('http://','https://')
