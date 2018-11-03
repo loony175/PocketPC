@@ -142,6 +142,33 @@ def miguvideo(room_id):
             logging.warning('[MiguVideo] %s not online.'%room_id)
             time.sleep(5)
 
+def netease(room_id):
+    room_ids={'snh':'17400180','gnz':'40363897','shy':'80432957','ckg':'60276834'}
+    try:
+        room_id_=room_ids[room_id]
+    except KeyError:
+        if room_id in ['bej']:
+            return
+        else:
+            room_id_=room_id
+    while True:
+        while True:
+            try:
+                resp=requests.get('https://live.ent.163.com/%s'%room_id_).text
+                break
+            except Exception as e:
+                logging.warning('[Netease] %s: %s'%(room_id_,e))
+        for item in bs4.BeautifulSoup(resp,'html.parser').find_all('script'):
+            m=re.match(r'^var roomData = decodeURIComponent\("(?P<string>.*)"\);$',item.get_text().strip())
+            if m:
+                data=json.loads(parse.unquote(m.group('string')))
+                break
+        if m:
+            break
+        logging.warning('[Netease] %s not online.'%room_id_)
+        time.sleep(1)
+    return data['pullUrl']
+
 def main():
     parser=argparse.ArgumentParser()
     add=parser.add_argument
@@ -161,13 +188,13 @@ def main():
     platform_=None
     method=None
     args_=args.arguments.split(',')
-    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','miguvideo','1','2','3','4','5','6']:
+    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','miguvideo','netease','1','2','3','4','5','6','7']:
         platform_=args_[0]
         room_id=args_[1]
-        if platform_ in ['1','2','3','4','5','6']:
-            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo','6':'miguvideo'}
+        if platform_ in ['1','2','3','4','5','6','7']:
+            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo','6':'miguvideo','7':'netease'}
             platform_=real_platform[platform_]
-        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo,'miguvideo':miguvideo}
+        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo,'miguvideo':miguvideo,'netease':netease}
         method=methods.get(platform_)
     input=None
     should_retry=False
@@ -179,7 +206,7 @@ def main():
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|DTS \d+\, next:\d+ st:1 invalid dropping)')
     if args.remote is None:
         if platform_:
-            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','miguvideo':'MiguVideo'}
+            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','miguvideo':'MiguVideo','netease':'Netease'}
             platform_name=platforms[platform_]
             if room_id in ['snh','bej','gnz','shy','ckg']:
                 room_name='%s48'%room_id.upper()
@@ -196,7 +223,7 @@ def main():
         while True:
             if platform_:
                 try:
-                    if method==bilibili:
+                    if method in [bilibili,netease]:
                         if input is None or should_retry:
                             input=method(room_id)
                             should_retry=False
@@ -276,7 +303,7 @@ def main():
                     sys.stderr.flush()
                     if args.remote is None and args.log:
                         f.write(line)
-                if method==bilibili and retry_pattern.search(line):
+                if method in [bilibili,netease] and retry_pattern.search(line):
                     should_retry=True
                 if error_pattern.search(line):
                     p.terminate()
