@@ -176,7 +176,7 @@ def main():
     f=None
     regular_pattern=re.compile(r'Opening \'.*\' for reading')
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
-    error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|st:1 invalid dropping|invalid dropping st:1)')
+    error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|DTS \d+\, next:\d+ st:1 invalid dropping)')
     if args.remote is None:
         if platform_:
             platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','miguvideo':'MiguVideo'}
