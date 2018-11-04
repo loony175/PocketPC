@@ -203,6 +203,8 @@ def main():
     f=None
     regular_pattern=re.compile(r'Opening \'.*\' for reading')
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
+    expected_fps_pattern=re.compile(r'\, \d+(\.\d+)? fps')
+    actual_fps_pattern=re.compile(r'fps=\s?\d+(\.\d+)?')
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|DTS \d+\, next:\d+ st:1 invalid dropping)')
     if args.remote is None:
         if platform_:
@@ -221,6 +223,7 @@ def main():
         count=1
     try:
         while True:
+            expected_fps=0
             if platform_:
                 try:
                     if method in [bilibili,netease]:
@@ -305,6 +308,15 @@ def main():
                         f.write(line)
                 if method in [bilibili,netease] and retry_pattern.search(line):
                     should_retry=True
+                if expected_fps_pattern.search(line):
+                    m=re.match(r'^.*\, (\d+(\.\d+)?) fps(\, )?.*$',line.strip())
+                    if m:
+                        expected_fps=round(float(m.group(1)))
+                if actual_fps_pattern.search(line):
+                    actual_fps=re.match(r'^.*fps=\s?(\d+(\.\d+)?).*$',line.strip()).group(1)
+                    if actual_fps!='0.0' and float(actual_fps)<expected_fps:
+                        p.terminate()
+                        break
                 if error_pattern.search(line):
                     p.terminate()
                     break
