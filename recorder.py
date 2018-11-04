@@ -158,16 +158,16 @@ def netease(room_id):
                 break
             except Exception as e:
                 logging.warning('[Netease] %s: %s'%(room_id_,e))
+        data=None
         for item in bs4.BeautifulSoup(resp,'html.parser').find_all('script'):
             m=re.match(r'^var roomData = decodeURIComponent\("(?P<string>.*)"\);$',item.get_text().strip())
             if m:
                 data=json.loads(parse.unquote(m.group('string')))
                 break
-        if m:
-            break
+        if data:
+            return data['pullUrl']
         logging.warning('[Netease] %s not online.'%room_id_)
         time.sleep(1)
-    return data['pullUrl']
 
 def main():
     parser=argparse.ArgumentParser()
