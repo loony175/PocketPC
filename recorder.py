@@ -223,7 +223,6 @@ def main():
         count=1
     try:
         while True:
-            expected_fps=0
             if platform_:
                 try:
                     if method in [bilibili,netease]:
@@ -300,6 +299,7 @@ def main():
                 sys.exit('FFmpeg missing. See details on https://ffmpeg.org/download.html\nAdding FFmpeg to PATH is recommended after downloading it.')
             if args.remote is None and args.log:
                 f=open(log,'w')
+            expected_fps=0
             for line in p.stderr:
                 if not regular_pattern.search(line):
                     sys.stderr.write(line)
