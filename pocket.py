@@ -10,7 +10,7 @@ import requests
 from urllib import parse
 
 def request_process(is_review,last_time,group_id,member_id,limit):
-    resp=requests.post('https://plive.48.cn/livesystem/api/live/v1/memberLivePage',headers={'Content-Type':'application/json','version':'5.3.1','os':'android'},json={'lastTime':last_time,'groupId':group_id,'memberId':member_id,'limit':limit}).json()
+    resp=requests.post('https://plive.48.cn/livesystem/api/live/v1/memberLivePage',headers={'Content-Type':'application/json','version':'5.3.2','os':'android'},json={'lastTime':last_time,'groupId':group_id,'memberId':member_id,'limit':limit}).json()
     if is_review:
         data=resp['content']['reviewList']
     else:
@@ -30,7 +30,7 @@ def request_process(is_review,last_time,group_id,member_id,limit):
         info['startTime']=start_time
         info['memberId']=dict['memberId']
         info['liveType']=dict['liveType']
-        info['streamPath']=dict['streamPath'].replace('http://','https://')
+        info['streamPath']=dict['streamPath'].replace('http://','https://').replace('_wb480','')
         intermediate.append(info)
     return intermediate
 

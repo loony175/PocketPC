@@ -8,7 +8,7 @@ import requests
 def main():
     data=[]
     members=[]
-    resp=requests.post('https://plive.48.cn/livesystem/api/live/v1/memberLivePage',headers={'Content-Type':'application/json','version':'5.3.1','os':'android'},json={'lastTime':0,'groupId':0,'memberId':0,'limit':30000}).json()
+    resp=requests.post('https://plive.48.cn/livesystem/api/live/v1/memberLivePage',headers={'Content-Type':'application/json','version':'5.3.2','os':'android'},json={'lastTime':0,'groupId':0,'memberId':0,'limit':30000}).json()
     for dict in sorted(resp['content']['reviewList'],key=operator.itemgetter('memberId')):
         if dict['memberId'] not in members:
             data.append(dict)
