@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import re
+import bs4
 import requests
 
 def main():
@@ -15,8 +15,9 @@ def main():
         url='http://zhibo.ckg48.com%s'%path
     else:
         url='http://live.%s.com%s'%(args.group_name,path)
+    resp=requests.get(url).text
     try:
-        print(re.findall('https?://.*\.m3u8[^"]*',requests.get(url).text)[0])
+        print(bs4.BeautifulSoup(resp,'html.parser').find_all('input',id='chao_url')[0]['value'])
     except IndexError:
         pass
 
