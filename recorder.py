@@ -24,11 +24,7 @@ def live48(room_id):
         room_id_=room_ids[room_id]
     except KeyError:
         return
-    if room_id=='snh':
-        quality='gaoqing'
-    else:
-        quality='chaoqing'
-    return 'http://cyflv.ckg48.com/%s/%s.flv'%(quality,room_id_)
+    return 'http://cyflv.ckg48.com/chaoqing/%s.flv'%room_id_
 
 def bilibili(room_id):
     room_ids={'snh':'48','bej':'383045','gnz':'391199','shy':'2827401','ckg':'6015846'}
