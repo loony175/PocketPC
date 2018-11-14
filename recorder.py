@@ -97,8 +97,7 @@ def yizhibo(room_id):
                 break
             except Exception as e:
                 logging.warning('[Yizhibo] %s: %s'%(room_id_,e))
-        item=bs4.BeautifulSoup(resp,'html.parser').find_all('div',class_='index_img fl pr')[0]
-        for child in item.children:
+        for child in bs4.BeautifulSoup(resp,'html.parser').find_all('div',class_='index_img fl pr')[0]:
             if child.name=='div' and child.get_text().strip()=='回放':
                 logging.warning('[Yizhibo] %s not online.'%room_id_)
                 break
