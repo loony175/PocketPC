@@ -81,8 +81,9 @@ def main():
             year=now.year
             month=now.month
             day=now.day
-        base_timestamp=arrow.get(year,month,day,tzinfo='Asia/Shanghai').timestamp*1000
-        args.last_time=base_timestamp+86400000
+        base_time=arrow.get(year,month,day,tzinfo='Asia/Shanghai')
+        base_timestamp=base_time.timestamp*1000
+        args.last_time=base_time.shift(days=1).timestamp*1000
         args.limit=100
     num_request=args.limit
     if args.type or args.format:
