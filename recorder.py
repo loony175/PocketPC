@@ -15,8 +15,6 @@ import sys
 import time
 from urllib import parse
 
-HEADERS={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
-
 def live48(room_id):
     time.sleep(1)
     room_ids={'snh':'9999','bej':'2001','gnz':'3001','shy':'6001','ckg':'8001'}
@@ -27,28 +25,19 @@ def live48(room_id):
     return 'http://cyflv.ckg48.com/chaoqing/%s.flv'%room_id_
 
 def bilibili(room_id):
+    time.sleep(1)
     room_ids={'snh':'48','bej':'383045','gnz':'391199','shy':'2827401','ckg':'6015846'}
     try:
         room_id_=room_ids[room_id]
     except KeyError:
         room_id_=room_id
     while True:
-        while True:
-            try:
-                resp=requests.get('https://live.bilibili.com/%s'%room_id_,headers=HEADERS).text
-                break
-            except Exception as e:
-                logging.warning('[Bilibili] %s: %s'%(room_id_,e))
-        for item in bs4.BeautifulSoup(resp,'html.parser').find_all('script'):
-            m=re.match(r'^window\.__NEPTUNE_IS_MY_WAIFU__=(?P<json>.*)$',item.get_text())
-            if m:
-                data=json.loads(m.group('json'))
-                break
         try:
-            return data['playUrlRes']['data']['durl'][0]['url']
-        except KeyError:
-            logging.warning('[Bilibili] %s not online.'%room_id_)
-            time.sleep(1)
+            resp=requests.get('https://api.live.bilibili.com/room/v1/Room/playUrl',params={'cid':room_id_,'quality':0,'platform':'web'}).json()
+            break
+        except Exception as e:
+            logging.warning('[Bilibili] %s: %s'%(room_id_,e))
+    return resp['data']['durl'][0]['url']
 
 def douyu(room_id):
     room_ids={'snh':'56229','bej':'668687','gnz':'668530','shy':'1536837','ckg':'3532048'}
