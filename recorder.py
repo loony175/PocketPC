@@ -31,9 +31,12 @@ def bilibili(room_id):
         room_id_=room_ids[room_id]
     except KeyError:
         room_id_=room_id
+    base_url='https://api.live.bilibili.com/room/v1/Room'
     while True:
         try:
-            resp=requests.get('https://api.live.bilibili.com/room/v1/Room/playUrl',params={'cid':room_id_,'quality':0,'platform':'web'}).json()
+            resp=requests.get('%s/room_init'%base_url,params={'id':room_id_}).json()
+            room_id_=str(resp['data']['room_id'])
+            resp=requests.get('%s/playUrl'%base_url,params={'cid':room_id_,'quality':0,'platform':'web'}).json()
             break
         except Exception as e:
             logging.warning('[Bilibili] %s: %s'%(room_id_,e))
