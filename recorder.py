@@ -111,20 +111,20 @@ def miguvideo(room_id):
         while True:
             try:
                 resp=requests.get(data['content'].replace('http://','https://'),headers=headers).json()
+                if resp['body']['liveStatus']=='2':
+                    resp=requests.get(data['url_h'].replace('http://','https://'),headers=headers).json()
+                    for rate_value in ['4','3','2','1']:
+                        rate=[dict for dict in resp['body']['rates'] if dict['rateValue']==rate_value]
+                        if len(rate)==1:
+                            rate_url=rate[0]['rateUrl']
+                            if rate_url!='':
+                                return rate_url
+                else:
+                    logging.warning('[MiguVideo] %s not online.'%room_id)
+                    time.sleep(5)
                 break
             except Exception as e:
                 logging.warning('[MiguVideo] %s: %s'%(room_id,e))
-        if resp['body']['liveStatus']=='2':
-            while True:
-                try:
-                    resp=requests.get(data['url_h'].replace('http://','https://'),headers=headers).json()
-                    break
-                except Exception as e:
-                    logging.warning('[MiguVideo] %s: %s'%(room_id,e))
-            return [dict['rateUrl'] for dict in resp['body']['rates'] if dict['rateUrl']!=''][0]
-        else:
-            logging.warning('[MiguVideo] %s not online.'%room_id)
-            time.sleep(5)
 
 def netease(room_id):
     room_ids={'snh':'17400180','gnz':'40363897','shy':'80432957','ckg':'60276834'}
