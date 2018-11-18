@@ -1,5 +1,6 @@
 arrow
 beautifulsoup4
 dnspython
+m3u8
 PyYAML
 requests

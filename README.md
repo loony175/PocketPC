@@ -14,6 +14,7 @@ pip install -U -r requirements.txt
 ## Contents
 - [douyin.py](#douyinpy)
 - [member_id.py](#member_idpy)
+- [migu.py](#migupy)
 - [modian.py](#modianpy)
 - [pocket.py](#pocketpy)
 - [pubed_time.py](#pubed_timepy)
@@ -73,6 +74,16 @@ optional arguments:
 更新`member_id.json`的脚本。`member_id.json`是一个存储从成员姓名到成员口袋直播间ID的映射关系的JSON文件。
 
 执行时无需传入任何参数。一般情况下，没有任何输出则表示更新成功。
+
+## migu.py
+查询咪咕直播回放M3U8地址。
+
+```
+positional arguments:
+  id  要查询的回放ID。
+```
+
+以`https://tv.miguvideo.com/#/video/tv/550010583120181027002`为例，`id`为`550010583120181027002`。
 
 ## modian.py
 查询指定摩点账号中正在众筹的项目。
