@@ -21,7 +21,7 @@ def request_process(is_review,last_time,group_id,member_id,limit):
         info['title']=dict['title']
         sub_title={}
         sub_title['raw']=dict['subTitle']
-        sub_title['base64']=bytes.decode(base64.b64encode(str.encode(dict['subTitle'])))
+        sub_title['base64']=base64.b64encode(dict['subTitle'].encode()).decode()
         info['subTitle']=sub_title
         info['picPath']=['https://source.48.cn%s'%obj for obj in dict['picPath'].split(',')]
         start_time={}

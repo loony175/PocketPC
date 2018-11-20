@@ -38,7 +38,7 @@ def main():
             info={}
             share_desc={}
             share_desc['raw']=dict['share_info']['share_desc']
-            share_desc['base64']=bytes.decode(base64.b64encode(str.encode(share_desc['raw'])))
+            share_desc['base64']=base64.b64encode(share_desc['raw'].encode()).decode()
             info['share_desc']=share_desc
             info['play_addr']=dict['video']['play_addr']['url_list'][0]
             info['height']=dict['video']['height']
