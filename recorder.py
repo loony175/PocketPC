@@ -162,6 +162,7 @@ def main():
     add('arguments')
     add('--debug',action='store_true')
     add('--log',action='store_true')
+    add('-f','--format',choices=['ts','flv'],default='ts')
     add('-r','--remote')
     add('-t','--test',action='store_true')
     add('-c','--convert',action='store_true')
@@ -268,10 +269,10 @@ def main():
                 info['idc']=resp[4]
                 sys.exit(json.dumps(info,indent=2,ensure_ascii=False))
             if args.remote is None:
-                file=dir/f'{count}.ts'
+                file=dir/f'{count}.{args.format}'
                 if file.exists():
                     count+=1
-                output=dir/f'{count}.ts'
+                output=dir/f'{count}.{args.format}'
                 if args.log:
                     log=dir/f'{count}.log'
                 cmd=['ffmpeg','-hide_banner','-y','-i',input,'-c','copy',output.as_posix()]
@@ -337,7 +338,7 @@ def main():
             else:
                 if args.convert:
                     for num in range(1,count+1):
-                        file=dir/f'{num}.ts'
+                        file=dir/f'{num}.{args.format}'
                         if file.exists():
                             input=file
                             output=dir/f'{num}.mp4'
