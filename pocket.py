@@ -30,7 +30,9 @@ def request_process(is_review,last_time,group_id,member_id,limit):
         info['startTime']=start_time
         info['memberId']=dict['memberId']
         info['liveType']=dict['liveType']
-        info['streamPath']=dict['streamPath'].replace('http://','https://').replace('_wb480','')
+        info['streamPath']=dict['streamPath'].replace('_wb480','')
+        if parse.urlparse(info['streamPath']).hostname!='alcdn.f01.xiaoka.tv':
+            info['streamPath']=info['streamPath'].replace('http://','https://')
         intermediate.append(info)
     return intermediate
 
