@@ -71,7 +71,7 @@ def main():
     else:
         member_id=0
     if args.limit==0:
-        args.limit=30000
+        args.limit=40000
     if args.date:
         m=re.match(r'^((?P<year>\d{4})-)?((?P<month>\d{2})-)?(?P<day>\d{2})?$',args.date)
         now=arrow.now('Asia/Shanghai')
