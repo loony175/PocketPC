@@ -107,7 +107,12 @@ def miguvideo(room_id):
         return
     cmd=['phantomjs','miguvideo.js','https://tv.miguvideo.com/#/video/tv/%s'%room_id]
     while True:
-        data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
+        try:
+            data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
+        except subprocess.CalledProcessError as e:
+            logging.warning('[MiguVideo] %s: %s'%(room_id,e))
+            time.sleep(10)
+            continue
         headers={}
         for dict in data['headers']:
             headers[dict['name']]=dict['value']
@@ -124,7 +129,7 @@ def miguvideo(room_id):
                                 return rate_url
                 else:
                     logging.warning('[MiguVideo] %s not online.'%room_id)
-                    time.sleep(5)
+                    time.sleep(10)
                 break
             except Exception as e:
                 logging.warning('[MiguVideo] %s: %s'%(room_id,e))
