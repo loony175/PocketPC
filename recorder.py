@@ -15,6 +15,8 @@ import sys
 import time
 from urllib import parse
 
+USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
+
 def live48(room_id):
     time.sleep(1)
     room_ids={'snh':'9999','bej':'2001','gnz':'3001','shy':'6001','ckg':'8001'}
@@ -122,7 +124,11 @@ def miguvideo(room_id):
                 if resp['body']['liveStatus']=='2':
                     resp=requests.get(data['url_h'].replace('http://','https://'),headers=headers).json()
                     for rate_value in ['4','3','2','1']:
-                        rate=[dict for dict in resp['body']['rates'] if dict['rateValue']==rate_value]
+                        try:
+                            rate=[dict for dict in resp['body']['rates'] if dict['rateValue']==rate_value]
+                        except TypeError:
+                            logging.warning('[MiguVideo] %s: %s'%(room_id,resp['message']))
+                            return
                         if len(rate)==1:
                             rate_url=rate[0]['rateUrl']
                             if rate_url!='':
@@ -280,10 +286,16 @@ def main():
                 output=dir/f'{count}.{args.format}'
                 if args.log:
                     log=dir/f'{count}.log'
-                cmd=['ffmpeg','-hide_banner','-y','-i',input,'-c','copy',output.as_posix()]
             else:
                 output=args.remote
-                cmd=['ffmpeg','-hide_banner','-y','-i',input,'-c','copy','-bsf:a','aac_adtstoasc','-f','flv',output]
+            cmd=['ffmpeg','-hide_banner','-y']
+            if method==miguvideo:
+                cmd.extend(['-user_agent',USER_AGENT])
+            cmd.extend(['-i',input,'-c','copy'])
+            if args.remote is None:
+                cmd.extend([output.as_posix()])
+            else:
+                cmd.extend(['-bsf:a','aac_adtstoasc','-f','flv',output])
             try:
                 p=subprocess.Popen(cmd,stderr=subprocess.PIPE,bufsize=1,universal_newlines=True,encoding='utf-8')
             except FileNotFoundError:
