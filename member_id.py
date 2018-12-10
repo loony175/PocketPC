@@ -1,27 +1,25 @@
 #!/usr/bin/env python3
 
+import arrow
 import json
-import operator
-import re
 import requests
 
 def main():
-    data=[]
-    members=[]
-    resp=requests.post('https://plive.48.cn/livesystem/api/live/v1/memberLivePage',headers={'Content-Type':'application/json','version':'5.3.2','os':'android'},json={'lastTime':0,'groupId':0,'memberId':0,'limit':40000}).json()
-    for dict in sorted(resp['content']['reviewList'],key=operator.itemgetter('memberId')):
-        if dict['memberId'] not in members:
-            data.append(dict)
-            members.append(dict['memberId'])
+    json_={}
+    json_['memberInfoUtime']='2012-10-14 00:00:00'
+    for key in ['functionUtime','groupUtime','memberPropertyUtime','musicAlbumUtime','musicUtime','periodUtime','talkUtime','teamUtime','urlUtime','videoTypeUtime','videoUtime']:
+        json_[key]=arrow.now('Asia/Shanghai').strftime('%Y-%m-%d %H:%M:%S')
+    resp=requests.post('https://psync.48.cn/syncsystem/api/cache/v1/update/overview',headers={'Content-Type':'application/json','version':'5.3.2','os':'android'},json=json_).json()
+    data=resp['content']['memberInfo']
+    members=[dict['real_name'] for dict in data]
+    duplicate_names=[]
+    for member in set(members):
+        if members.count(member)>1:
+            duplicate_names.append(member)
     members={}
     for dict in data:
-        if dict['memberId']==4:
-            member_name='呵呵姐'
-        elif dict['memberId']==530431:
-            member_name='呵呵妹'
-        else:
-            member_name=re.match(r'^(.*)的.*（回放生成中）$',dict['title']).group(1)
-        members[member_name]=dict['memberId']
+        member_name=dict['nick_name'] if dict['real_name'] in duplicate_names else dict['real_name']
+        members[member_name]=dict['member_id']
     f=open('member_id.json','w')
     f.write(json.dumps(members,indent=2,ensure_ascii=False))
     f.write('\n')
