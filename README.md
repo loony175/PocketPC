@@ -1,6 +1,7 @@
 基于Python的PocketPC
 
 # Requirement
+- [Python](https://www.python.org/downloads/) 3.6.0 or later
 ```
 pip install -U -r requirements.txt
 ```
