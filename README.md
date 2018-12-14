@@ -177,7 +177,7 @@ optional arguments:
   -c, --convert               结束录制后将录制期间生成的所有输出文件重新封装为mp4文件（仅在不传入 -r 或 -t 时有效）。
 ```
 
-在录制过程中按`Ctrl + C`即结束录制。
+**在录制过程中按`q`可手动中止当前FFmpeg进程，按`Ctrl + C`即结束录制。**
 
 核心代码来源：<https://github.com/zmwangx/caterpillar/blob/master/src/caterpillar/merge.py#L43-L114>
 
