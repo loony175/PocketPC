@@ -224,7 +224,7 @@ def main():
         while True:
             if platform_:
                 try:
-                    if method in [bilibili,netease]:
+                    if method==netease:
                         if input is None or should_retry:
                             input=method(room_id)
                             should_retry=False
@@ -311,7 +311,7 @@ def main():
                     sys.stderr.flush()
                     if args.remote is None and args.log:
                         f.write(line)
-                if method in [bilibili,netease] and retry_pattern.search(line):
+                if method==netease and retry_pattern.search(line):
                     should_retry=True
                 if expected_fps_pattern.search(line):
                     m=re.match(r'^.*\, (\d+(\.\d+)?) fps(\, )?.*$',line.strip())
