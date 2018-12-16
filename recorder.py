@@ -172,6 +172,7 @@ def main():
     add=parser.add_argument
     add('arguments')
     add('--debug',action='store_true')
+    add('-k','--ignore-errors',action='store_true')
     add('--log',action='store_true')
     add('-f','--format',choices=['ts','flv'],default='ts')
     add('-r','--remote')
@@ -317,12 +318,12 @@ def main():
                     m=re.match(r'^.*\, (\d+(\.\d+)?) fps(\, )?.*$',line.strip())
                     if m:
                         expected_fps=round(float(m.group(1)))
-                if actual_fps_pattern.search(line):
+                if actual_fps_pattern.search(line) and not args.ignore_errors:
                     actual_fps=re.match(r'^.*fps=\s?(\d+(\.\d+)?).*$',line.strip()).group(1)
                     if actual_fps!='0.0' and float(actual_fps)<expected_fps:
                         p.terminate()
                         break
-                if error_pattern.search(line):
+                if error_pattern.search(line) and not args.ignore_errors:
                     p.terminate()
                     break
             p=None
