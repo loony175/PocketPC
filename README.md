@@ -20,6 +20,8 @@ pip install -U -r requirements.txt
 - [pocket.py](#pocketpy)
 - [pubed_time.py](#pubed_timepy)
 - [recorder.py](#recorderpy)
+  - [How it works](#how-it-works)
+  - [Usage for recorder.py](#usage-for-recorderpy)
   - [Known bugs](#known-bugs)
   - [Solutions](#solutions)
 - [stage.py](#stagepy)
@@ -164,6 +166,20 @@ positional arguments:
 ## recorder.py
 “不间断”录制视频直播流。
 
+核心代码来源：<https://github.com/zmwangx/caterpillar/blob/master/src/caterpillar/merge.py#L43-L114>
+
+### How it works
+本脚本在下列情况发生时会重新调用FFmpeg：
+- **被动中止**：FFmpeg由于各种原因而自行停止运行。
+- **主动中止**：本脚本在下列情况发生时会终止当前FFmpeg进程：
+  - 匹配到FFmpeg输出到stdout的内容中包含下列内容时：
+    - `Non-monotonous DTS in output stream \d+:\d+`
+    - `DTS \d+ [\<\>] \d+ out of order`
+    - `DTS \d+\, next:\d+ st:1 invalid dropping`
+  - 检测到当前实际FPS值比当前视频流的理论FPS值低时。
+- **用户中止**：用户在录制过程中自行按`q`手动中止当前FFmpeg进程。
+
+### Usage for recorder.py
 ```
 positional arguments:
   arguments                   执行本脚本必需的参数。
@@ -178,8 +194,6 @@ optional arguments:
 ```
 
 **在录制过程中按`q`可手动中止当前FFmpeg进程，按`Ctrl + C`即结束录制。**
-
-核心代码来源：<https://github.com/zmwangx/caterpillar/blob/master/src/caterpillar/merge.py#L43-L114>
 
 `arguments`的有效值为下列情形之一：
 - `platform` `room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，yizhibo，miguvideo，netease，1，2，3，4，5，6，7（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
