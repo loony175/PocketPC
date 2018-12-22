@@ -7,8 +7,9 @@ import requests
 def main():
     json_={}
     json_['memberInfoUtime']='2012-10-14 00:00:00'
+    now=arrow.now('Asia/Shanghai').strftime('%Y-%m-%d %H:%M:%S')
     for key in ['functionUtime','groupUtime','memberPropertyUtime','musicAlbumUtime','musicUtime','periodUtime','talkUtime','teamUtime','urlUtime','videoTypeUtime','videoUtime']:
-        json_[key]=arrow.now('Asia/Shanghai').strftime('%Y-%m-%d %H:%M:%S')
+        json_[key]=now
     resp=requests.post('https://psync.48.cn/syncsystem/api/cache/v1/update/overview',headers={'Content-Type':'application/json','version':'5.3.2','os':'android'},json=json_).json()
     data=resp['content']['memberInfo']
     members=[dict['real_name'] for dict in data]
