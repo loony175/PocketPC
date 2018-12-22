@@ -5,9 +5,11 @@ import json
 import requests
 
 def main():
+    tzinfo='Asia/Shanghai'
+    time_format='%Y-%m-%d %H:%M:%S'
     json_={}
-    json_['memberInfoUtime']='2012-10-14 00:00:00'
-    now=arrow.now('Asia/Shanghai').strftime('%Y-%m-%d %H:%M:%S')
+    json_['memberInfoUtime']=arrow.get(2012,10,14,tzinfo=tzinfo).strftime(time_format)
+    now=arrow.now(tzinfo).strftime(time_format)
     for key in ['functionUtime','groupUtime','memberPropertyUtime','musicAlbumUtime','musicUtime','periodUtime','talkUtime','teamUtime','urlUtime','videoTypeUtime','videoUtime']:
         json_[key]=now
     resp=requests.post('https://psync.48.cn/syncsystem/api/cache/v1/update/overview',headers={'Content-Type':'application/json','version':'5.3.2','os':'android'},json=json_).json()
