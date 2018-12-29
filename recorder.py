@@ -319,10 +319,12 @@ def main():
                     if m:
                         expected_fps=round(float(m.group(1)))
                 if actual_fps_pattern.search(line) and not args.ignore_errors:
-                    actual_fps=re.match(r'^.*fps=\s?(\d+(\.\d+)?).*$',line.strip()).group(1)
-                    if actual_fps!='0.0' and float(actual_fps)<expected_fps:
-                        p.terminate()
-                        break
+                    m=re.match(r'^.*fps=\s?(\d+(\.\d+)?).*$',line.strip())
+                    if m:
+                        actual_fps=m.group(1)
+                        if actual_fps!='0.0' and float(actual_fps)<expected_fps:
+                            p.terminate()
+                            break
                 if error_pattern.search(line) and not args.ignore_errors:
                     p.terminate()
                     break
