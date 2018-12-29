@@ -2,6 +2,7 @@
 
 import arrow
 import json
+import operator
 import requests
 
 def main():
@@ -13,7 +14,7 @@ def main():
     for key in ['functionUtime','groupUtime','memberPropertyUtime','musicAlbumUtime','musicUtime','periodUtime','talkUtime','teamUtime','urlUtime','videoTypeUtime','videoUtime']:
         json_[key]=now
     resp=requests.post('https://psync.48.cn/syncsystem/api/cache/v1/update/overview',headers={'Content-Type':'application/json','version':'5.3.2','os':'android'},json=json_).json()
-    data=resp['content']['memberInfo']
+    data=sorted(resp['content']['memberInfo'],key=operator.itemgetter('member_id'))
     members=[dict['real_name'] for dict in data]
     duplicate_names=[]
     for member in set(members):
