@@ -176,6 +176,7 @@ positional arguments:
     - `Non-monotonous DTS in output stream \d+:\d+`
     - `DTS \d+ [\<\>] \d+ out of order`
     - `DTS \d+\, next:\d+ st:1 invalid dropping`
+    - `missing picture in access unit with size \d+`
   - 检测到当前实际FPS值比当前视频流的理论FPS值低时。
 - **用户中止**：用户在录制过程中自行按`q`手动中止当前FFmpeg进程。
 

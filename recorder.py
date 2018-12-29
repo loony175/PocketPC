@@ -205,7 +205,7 @@ def main():
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
     expected_fps_pattern=re.compile(r'\, \d+(\.\d+)? fps')
     actual_fps_pattern=re.compile(r'fps=\s?\d+(\.\d+)?')
-    error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|DTS \d+\, next:\d+ st:1 invalid dropping)')
+    error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|DTS \d+\, next:\d+ st:1 invalid dropping|missing picture in access unit with size \d+)')
     if args.remote is None:
         if platform_:
             platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','miguvideo':'MiguVideo','netease':'Netease'}
