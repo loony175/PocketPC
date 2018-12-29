@@ -26,7 +26,7 @@ def live48(room_id):
         return
     return 'http://cyflv.ckg48.com/chaoqing/%s.flv'%room_id_
 
-def bilibili(room_id):
+def bilibili(room_id,stream):
     time.sleep(1)
     room_ids={'snh':'48','bej':'383045','gnz':'391199','shy':'2827401','ckg':'6015846'}
     try:
@@ -42,7 +42,7 @@ def bilibili(room_id):
             break
         except Exception as e:
             logging.warning('[Bilibili] %s: %s'%(room_id_,e))
-    return resp['data']['durl'][0]['url']
+    return resp['data']['durl'][stream]['url']
 
 def douyu(room_id):
     room_ids={'snh':'56229','bej':'668687','gnz':'668530','shy':'1536837','ckg':'3532048'}
@@ -174,6 +174,7 @@ def main():
     add('--debug',action='store_true')
     add('-k','--ignore-errors',action='store_true')
     add('--log',action='store_true')
+    add('-bs','--bili-stream',type=int,choices=[0,1,2,3],default=0)
     add('-f','--format',choices=['ts','flv'],default='ts')
     add('-r','--remote')
     add('-t','--test',action='store_true')
@@ -234,6 +235,8 @@ def main():
                         if input is None or now-begin_time>=21600:
                             input=method(room_id)
                             begin_time=int(time.time())
+                    elif method==bilibili:
+                        input=method(room_id,args.bili_stream)
                     else:
                         input=method(room_id)
                 except FileNotFoundError:
