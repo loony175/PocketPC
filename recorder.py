@@ -17,14 +17,20 @@ from urllib import parse
 
 USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36'
 
-def live48(room_id):
+def live48(room_id,format):
     time.sleep(1)
     room_ids={'snh':'9999','bej':'2001','gnz':'3001','shy':'6001','ckg':'8001'}
     try:
         room_id_=room_ids[room_id]
     except KeyError:
         return
-    return 'http://cyflv.ckg48.com/chaoqing/%s.flv'%room_id_
+    if format=='flv':
+        protocol='http'
+        path='%s.flv'%room_id_
+    elif format=='rtmp':
+        protocol='rtmp'
+        path=room_id_
+    return '%s://cyflv.ckg48.com/chaoqing/%s'%(protocol,path)
 
 def bilibili(room_id,stream):
     time.sleep(1)
@@ -174,6 +180,7 @@ def main():
     add('--debug',action='store_true')
     add('-k','--ignore-errors',action='store_true')
     add('--log',action='store_true')
+    add('-of','--offi-format',choices=['flv','rtmp'],default='flv')
     add('-bs','--bili-stream',type=int,choices=[0,1,2,3],default=0)
     add('-f','--format',choices=['ts','flv'],default='ts')
     add('-r','--remote')
@@ -235,6 +242,8 @@ def main():
                         if input is None or now-begin_time>=21600:
                             input=method(room_id)
                             begin_time=int(time.time())
+                    elif method==live48:
+                        input=method(room_id,args.offi_format)
                     elif method==bilibili:
                         input=method(room_id,args.bili_stream)
                     else:
