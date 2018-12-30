@@ -182,6 +182,7 @@ def main():
     add('--log',action='store_true')
     add('-of','--offi-format',choices=['flv','rtmp'],default='flv')
     add('-bs','--bili-stream',type=int,choices=[0,1,2,3],default=0)
+    add('-ua','--user-agent')
     add('-f','--format',choices=['ts','flv'],default='ts')
     add('-r','--remote')
     add('-t','--test',action='store_true')
@@ -302,8 +303,13 @@ def main():
             else:
                 output=args.remote
             cmd=['ffmpeg','-hide_banner','-y']
+            user_agent=None
             if method==miguvideo:
-                cmd.extend(['-user_agent',USER_AGENT])
+                user_agent=USER_AGENT
+            elif args.user_agent:
+                user_agent=args.user_agent
+            if user_agent:
+                cmd.extend(['-user_agent',user_agent])
             cmd.extend(['-i',input,'-c','copy'])
             if args.remote is None:
                 cmd.extend([output.as_posix()])
