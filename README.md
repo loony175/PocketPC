@@ -88,6 +88,8 @@ positional arguments:
 
 以`https://tv.miguvideo.com/#/video/tv/550010583120181027002`为例，`id`为`550010583120181027002`。
 
+**本脚本的输出可直接作为[caterpillar](https://pypi.org/project/caterpillar-hls/)的输入。**
+
 ## modian.py
 查询指定摩点账号中正在众筹的项目。
 
