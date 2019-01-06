@@ -210,6 +210,7 @@ def main():
     begin_time=int(time.time())
     p=None
     f=None
+    line_=''
     regular_pattern=re.compile(r'Opening \'.*\' for reading')
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
     expected_fps_pattern=re.compile(r'\, \d+(\.\d+)? fps')
@@ -326,7 +327,11 @@ def main():
             expected_fps=0
             for line in p.stderr:
                 if not regular_pattern.search(line):
-                    sys.stderr.write(line)
+                    if actual_fps_pattern.search(line):
+                        line_=line.replace('\n','\r')
+                    else:
+                        line_=line
+                    sys.stderr.write(line_)
                     sys.stderr.flush()
                     if args.remote is None and args.log:
                         f.write(line)
@@ -370,21 +375,23 @@ def main():
             p.terminate()
         if f:
             f.close()
+        if line_.endswith('\r'):
+            sys.stderr.write('\n')
         if args.remote is None:
             if len(list(dir.iterdir()))==0:
                 dir.rmdir()
-            else:
-                if args.convert:
-                    for num in range(1,count+1):
-                        file=dir/f'{num}.{args.format}'
-                        if file.exists():
-                            input=file
-                            output=dir/f'{num}.mp4'
-                            cmd=['ffmpeg','-hide_banner','-y','-i',input.as_posix(),'-c','copy','-bsf:a','aac_adtstoasc','-movflags','faststart',output.as_posix()]
-                            try:
-                                subprocess.run(cmd)
-                            except KeyboardInterrupt:
-                                break
+            elif args.convert:
+                for num in range(1,count+1):
+                    file=dir/f'{num}.{args.format}'
+                    if not file.exists():
+                        continue
+                    input=file
+                    output=dir/f'{num}.mp4'
+                    cmd=['ffmpeg','-hide_banner','-y','-i',input.as_posix(),'-c','copy','-bsf:a','aac_adtstoasc','-movflags','faststart',output.as_posix()]
+                    try:
+                        subprocess.run(cmd)
+                    except KeyboardInterrupt:
+                        break
 
 if __name__=='__main__':
     main()
