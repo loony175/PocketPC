@@ -137,7 +137,7 @@ def miguvideo(room_id):
                             return
                         if len(rate)==1:
                             rate_url=rate[0]['rateUrl']
-                            if rate_url!='':
+                            if rate_url:
                                 return rate_url
                 else:
                     logging.warning('[MiguVideo] %s not online.'%room_id)

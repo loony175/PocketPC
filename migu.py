@@ -28,7 +28,7 @@ def main():
             rate=[dict for dict in resp['body']['rates'] if dict['rateValue']==rate_value]
             if len(rate)==1:
                 rate_url=rate[0]['rateUrl']
-                if rate_url!='':
+                if rate_url:
                     break
         try:
             print(m3u8.load(rate_url).playlists[0].absolute_uri)
