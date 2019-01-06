@@ -174,7 +174,7 @@ positional arguments:
 本脚本在下列情况发生时会重新调用FFmpeg：
 - **被动中止**：FFmpeg由于各种原因而自行停止运行。
 - **主动中止**：本脚本在下列情况发生时会终止当前FFmpeg进程：
-  - 匹配到FFmpeg输出到stdout的内容中包含下列内容时：
+  - 匹配到FFmpeg的输出包含下列内容之一时：
     - `Non-monotonous DTS in output stream \d+:\d+`
     - `DTS \d+ [\<\>] \d+ out of order`
     - `DTS \d+\, next:\d+ st:1 invalid dropping`
@@ -189,8 +189,9 @@ positional arguments:
 
 optional arguments:
   --debug                                     调试模式，只输出FFmpeg要连接的远程主机的详细信息。
+  -q, --quiet                                 静默模式，只输出脚本开始执行以来的总拉流大小。
   -k, --ignore-errors                         停用上文所述“主动中止”策略。
-  --log                                       将输出到stdout的内容同时输出到与输出文件同名的log文件中（仅在不传入 -r 或 -t 时有效）。
+  --log                                       将FFmpeg的输出同时输出到与输出的视频文件同名的log文件中（仅在不传入 -r 或 -t 时有效）。
   -of OFFI_FORMAT, --offi-format OFFI_FORMAT  指定官网的拉流格式，有效值为flv，rtmp，默认值为flv。该参数在其它平台下无效。
   -bs BILI_STREAM, --bili-stream BILI_STREAM  指定Bilibili的直播线路，有效值为0，1，2，3（0为主线，1为备线1，2为备线2，3为备线3），默认值为0。该参数在其它平台下无效。
   -ua USER_AGENT, --user-agent USER_AGENT     手动指定FFmpeg的User-Agent。

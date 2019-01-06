@@ -178,6 +178,7 @@ def main():
     add=parser.add_argument
     add('arguments')
     add('--debug',action='store_true')
+    add('-q','--quiet',action='store_true')
     add('-k','--ignore-errors',action='store_true')
     add('--log',action='store_true')
     add('-of','--offi-format',choices=['flv','rtmp'],default='flv')
@@ -208,6 +209,7 @@ def main():
     p=None
     f=None
     line_=''
+    output_sizes=[]
     regular_pattern=re.compile(r'Opening \'.*\' for reading')
     retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
     expected_fps_pattern=re.compile(r'\, \d+(\.\d+)? fps')
@@ -318,10 +320,21 @@ def main():
                 sys.exit('FFmpeg missing. See details on https://ffmpeg.org/download.html\nAdding FFmpeg to PATH is recommended after downloading it.')
             if args.remote is None and args.log:
                 f=open(log,'w')
+            current_size=0
             expected_fps=0
             for line in p.stderr:
+                if args.quiet:
+                    m=re.match(r'^.*size=\s*(\d+)kB.*$',line.strip())
+                    if m:
+                        current_size=round(int(m.group(1))/1024,2)
                 if not regular_pattern.search(line):
-                    line_=line.replace('\n','\r') if actual_fps_pattern.search(line) else line
+                    if args.quiet:
+                        total_size=current_size
+                        for size in output_sizes:
+                            total_size+=size
+                        line_='%.2f MB\r'%total_size
+                    else:
+                        line_=line.replace('\n','\r') if actual_fps_pattern.search(line) else line
                     sys.stderr.write(line_)
                     sys.stderr.flush()
                     if args.remote is None and args.log:
@@ -342,6 +355,8 @@ def main():
                 if error_pattern.search(line) and not args.ignore_errors:
                     p.terminate()
                     break
+            if args.quiet and current_size:
+                output_sizes.append(current_size)
             p=None
             if args.remote is None:
                 if args.log:
@@ -368,6 +383,7 @@ def main():
             f.close()
         if line_.endswith('\r'):
             sys.stderr.write('\n')
+            sys.stderr.flush()
         if args.remote is None:
             if len(list(dir.iterdir()))==0:
                 dir.rmdir()
