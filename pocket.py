@@ -11,10 +11,8 @@ from urllib import parse
 
 def request_process(is_review,last_time,group_id,member_id,limit):
     resp=requests.post('https://plive.48.cn/livesystem/api/live/v1/memberLivePage',headers={'Content-Type':'application/json','version':'5.3.2','os':'android'},json={'lastTime':last_time,'groupId':group_id,'memberId':member_id,'limit':limit}).json()
-    if is_review:
-        data=resp['content']['reviewList']
-    else:
-        data=resp['content']['liveList']
+    content=resp['content']
+    data=content['reviewList'] if is_review else content['liveList']
     intermediate=[]
     for dict in data:
         info={}
@@ -66,10 +64,7 @@ def main():
     args=parser.parse_args()
     member_ids=json.loads(open('member_id.json','r').read())
     members=None
-    if args.member:
-        member_id=member_ids[args.member]
-    else:
-        member_id=0
+    member_id=member_ids[args.member] if args.member else 0
     if args.limit==0:
         args.limit=40000
     if args.date:

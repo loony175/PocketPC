@@ -190,10 +190,7 @@ def main():
     args=parser.parse_args()
     logging.basicConfig(level=logging.WARNING,format='%(levelname)s: %(message)s')
     if args.test:
-        if platform.system()=='Windows':
-            args.remote='NUL'
-        else:
-            args.remote='/dev/null'
+        args.remote='NUL' if platform.system()=='Windows' else '/dev/null'
     platform_=None
     method=None
     args_=args.arguments.split(',')
@@ -220,10 +217,7 @@ def main():
         if platform_:
             platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','miguvideo':'MiguVideo','netease':'Netease'}
             platform_name=platforms[platform_]
-            if room_id in ['snh','bej','gnz','shy','ckg']:
-                room_name='%s48'%room_id.upper()
-            else:
-                room_name=room_id
+            room_name='%s48'%room_id.upper() if room_id in ['snh','bej','gnz','shy','ckg'] else room_id
         else:
             url_parser=parse.urlparse(args.arguments)
             platform_name=url_parser.hostname
@@ -327,10 +321,7 @@ def main():
             expected_fps=0
             for line in p.stderr:
                 if not regular_pattern.search(line):
-                    if actual_fps_pattern.search(line):
-                        line_=line.replace('\n','\r')
-                    else:
-                        line_=line
+                    line_=line.replace('\n','\r') if actual_fps_pattern.search(line) else line
                     sys.stderr.write(line_)
                     sys.stderr.flush()
                     if args.remote is None and args.log:

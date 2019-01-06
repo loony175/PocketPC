@@ -11,10 +11,7 @@ def main():
     add('id',type=int)
     args=parser.parse_args()
     path='/Index/invedio/id/%d'%args.id
-    if args.group_name=='snh48':
-        url='http://zhibo.ckg48.com%s'%path
-    else:
-        url='http://live.%s.com%s'%(args.group_name,path)
+    url='http://zhibo.ckg48.com%s'%path if args.group_name=='snh48' else 'http://live.%s.com%s'%(args.group_name,path)
     resp=requests.get(url).text
     try:
         print(bs4.BeautifulSoup(resp,'html.parser').find_all('input',id='chao_url')[0]['value'])

@@ -46,10 +46,7 @@ def main():
     add('-N','--no-sum',action='store_true')
     args=parser.parse_args()
     config=yaml.load(open(args.config,'r').read())
-    if args.member is None:
-        user_ids=config.values()
-    else:
-        user_ids=[config[args.member]]
+    user_ids=config.values() if args.member is None else [config[args.member]]
     pool=multiprocessing.Pool(min([len(user_ids),args.jobs]))
     results=pool.map(request_process,user_ids)
     pool.close()
