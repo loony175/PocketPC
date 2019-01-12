@@ -17,8 +17,9 @@ from urllib import parse
 
 USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
 
-def live48(room_id,format):
-    time.sleep(1)
+def live48(room_id,format,should_wait):
+    if should_wait:
+        time.sleep(1)
     room_ids={'snh':'9999','bej':'2001','gnz':'3001','shy':'6001','ckg':'8001'}
     try:
         room_id_=room_ids[room_id]
@@ -32,8 +33,9 @@ def live48(room_id,format):
         path=room_id_
     return '%s://cyflv.ckg48.com/chaoqing/%s'%(protocol,path)
 
-def bilibili(room_id,stream):
-    time.sleep(1)
+def bilibili(room_id,stream,should_wait):
+    if should_wait:
+        time.sleep(1)
     room_ids={'snh':'48','bej':'383045','gnz':'391199','shy':'2827401','ckg':'6015846'}
     try:
         room_id_=room_ids[room_id]
@@ -205,13 +207,14 @@ def main():
         method=methods.get(platform_)
     input=None
     should_retry=False
+    should_wait=False
     begin_time=int(time.time())
     p=None
     f=None
     line_=''
     output_sizes=[]
     regular_pattern=re.compile(r'Opening \'.*\' for reading')
-    retry_pattern=re.compile(r'(403 Forbidden|404 Not Found)')
+    retry_pattern=re.compile(r'(403 Forbidden|404 Not Found|5XX Server Error)')
     expected_fps_pattern=re.compile(r'\, \d+(\.\d+)? fps')
     actual_fps_pattern=re.compile(r'fps=\s?\d+(\.\d+)?')
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|DTS \d+\, next:\d+ st:1 invalid dropping|missing picture in access unit with size \d+)')
@@ -240,10 +243,13 @@ def main():
                         if input is None or now-begin_time>=21600:
                             input=method(room_id)
                             begin_time=int(time.time())
-                    elif method==live48:
-                        input=method(room_id,args.offi_format)
-                    elif method==bilibili:
-                        input=method(room_id,args.bili_stream)
+                    elif method in [live48,bilibili]:
+                        if method==live48:
+                            spec_arg=args.offi_format
+                        elif method==bilibili:
+                            spec_arg=args.bili_stream
+                        input=method(room_id,spec_arg,should_wait)
+                        should_wait=False
                     else:
                         input=method(room_id)
                 except FileNotFoundError:
@@ -259,7 +265,9 @@ def main():
                         dir.rmdir()
                     sys.exit('Invalid room ID %s.'%room_id)
             else:
-                time.sleep(1)
+                if should_wait:
+                    time.sleep(1)
+                    should_wait=False
                 input=args.arguments
             if args.debug:
                 if args.remote is None:
@@ -322,6 +330,9 @@ def main():
                 f=open(log,'w')
             current_size=0
             expected_fps=0
+            previous_size=0
+            for size in output_sizes:
+                previous_size+=size
             for line in p.stderr:
                 if args.quiet:
                     m=re.match(r'^.*size=\s*(\d+)kB.*$',line.strip())
@@ -329,18 +340,16 @@ def main():
                         current_size=round(int(m.group(1))/1024,2)
                 if not regular_pattern.search(line):
                     if args.quiet:
-                        total_size=current_size
-                        for size in output_sizes:
-                            total_size+=size
-                        line_='%.2f MB\r'%total_size
+                        line_='%.2f MB\r'%float(previous_size+current_size)
                     else:
                         line_=line.replace('\n','\r') if actual_fps_pattern.search(line) else line
                     sys.stderr.write(line_)
                     sys.stderr.flush()
                     if args.remote is None and args.log:
                         f.write(line)
-                if method==netease and retry_pattern.search(line):
+                if retry_pattern.search(line):
                     should_retry=True
+                    should_wait=True
                 if expected_fps_pattern.search(line):
                     m=re.match(r'^.*\, (\d+(\.\d+)?) fps(\, )?.*$',line.strip())
                     if m:
