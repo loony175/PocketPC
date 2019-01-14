@@ -15,7 +15,7 @@ pip install -U -r requirements.txt
 ## Contents
 - [douyin.py](#douyinpy)
 - [member_id.py](#member_idpy)
-- [migu.py](#migupy)
+- [migu_video.py](#migu_videopy)
 - [modian.py](#modianpy)
 - [pocket.py](#pocketpy)
 - [pubed_time.py](#pubed_timepy)
@@ -78,7 +78,7 @@ optional arguments:
 
 执行时无需传入任何参数。一般情况下，没有任何输出则表示更新成功。
 
-## migu.py
+## migu_video.py
 查询咪咕直播回放M3U8地址。
 
 ```
