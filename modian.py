@@ -11,7 +11,7 @@ import yaml
 def request_process(user_id):
     while True:
         try:
-            resp=requests.post('https://mapi.modian.com/v41/user/build_product_list',data={'to_user_id':user_id})
+            resp=requests.post('http://mapi.modian.com/v45/user/build_product_list',data={'to_user_id':user_id})
             break
         except Exception:
             pass
