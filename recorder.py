@@ -353,7 +353,7 @@ def main():
                 if expected_fps_pattern.search(line):
                     m=re.match(r'^.*\, (\d+(\.\d+)?) fps(\, )?.*$',line.strip())
                     if m:
-                        expected_fps=round(float(m.group(1)))
+                        expected_fps=float(m.group(1))
                 if actual_fps_pattern.search(line) and not args.ignore_errors:
                     m=re.match(r'^.*fps=\s?(\d+(\.\d+)?).*$',line.strip())
                     if m:
