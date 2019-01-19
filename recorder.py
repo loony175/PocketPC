@@ -148,6 +148,43 @@ def migu_video(room_id):
             except Exception as e:
                 logging.warning('[MiguVideo] %s: %s'%(room_id,e))
 
+def migu_music_1(room_id):
+    if room_id in ['snh','bej','gnz','shy','ckg']:
+        return
+    base_url='https://c.musicapp.migu.cn/MIGUM2.0/v2.0'
+    while True:
+        try:
+            resp=requests.get('%s/content/queryConcertSummary.do'%base_url,params={'columnId':room_id}).json()
+            data=resp['data']
+            if data['concertStatus']==0:
+                live_id=data['liveId']
+                concert_id=data['concertId']
+                resp=requests.get('%s/danmaku/liveServerHosts.do'%base_url,params={'liveId':live_id,'concertId':concert_id,'liveType':1,'rateLevel':4}).json()
+                return resp['data']['hosts']['liveHostAddr']
+            else:
+                logging.warning('[MiguMusic1] %s not online.'%room_id)
+                time.sleep(1)
+        except Exception as e:
+            logging.warning('[MiguMusic1] %s: %s'%(room_id,e))
+
+def migu_music_2(room_id):
+    if room_id in ['snh','bej','gnz','shy','ckg']:
+        return
+    base_url='https://m.music.migu.cn/migu/remoting'
+    while True:
+        try:
+            resp=requests.get('%s/live_control_tag'%base_url,params={'pageid':room_id,'pagediv':'LIVE1'}).json()
+            data=resp['data']
+            if data['contentType']==10:
+                content_value=data['contentValue']
+                resp=requests.get('%s/get_music_playurl_tag'%base_url,params={'cid':content_value,'pid':2028593040,'rate':4}).json()
+                return resp['playurl']
+            else:
+                logging.warning('[MiguMusic2] %s not online.'%room_id)
+                time.sleep(1)
+        except Exception as e:
+            logging.warning('[MiguMusic2] %s: %s'%(room_id,e))
+
 def main():
     parser=argparse.ArgumentParser()
     add=parser.add_argument
@@ -170,13 +207,13 @@ def main():
     platform_=None
     method=None
     args_=args.arguments.split(',')
-    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','migu_video','1','2','3','4','5','6']:
+    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','migu_video','migu_music_1','migu_music_2','1','2','3','4','5','6','7','8']:
         platform_=args_[0]
         room_id=args_[1]
-        if platform_ in ['1','2','3','4','5','6']:
-            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo','6':'migu_video'}
+        if platform_ in ['1','2','3','4','5','6','7','8']:
+            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo','6':'migu_video','7':'migu_music_1','8':'migu_music_2'}
             platform_=real_platform[platform_]
-        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo,'migu_video':migu_video}
+        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo,'migu_video':migu_video,'migu_music_1':migu_music_1,'migu_music_2':migu_music_2}
         method=methods.get(platform_)
     input=None
     has_interval=False
@@ -192,7 +229,7 @@ def main():
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|DTS \d+\, next:\d+ st:1 invalid dropping|missing picture in access unit with size \d+)')
     if args.remote is None:
         if platform_:
-            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','migu_video':'MiguVideo'}
+            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','migu_video':'MiguVideo','migu_music_1':'MiguMusic1','migu_music_2':'MiguMusic2'}
             platform_name=platforms[platform_]
             room_name='%s48'%room_id.upper() if room_id in ['snh','bej','gnz','shy','ckg'] else room_id
         else:

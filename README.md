@@ -204,12 +204,14 @@ optional arguments:
 **在录制过程中按`q`可手动中止当前FFmpeg进程，按`Ctrl + C`即结束录制。**
 
 `arguments`的有效值为下列情形之一：
-- `platform` `room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，yizhibo，migu_video，1，2，3，4，5，6（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
+- `platform` `room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，yizhibo，migu_video，migu_music_1，migu_music_2，1，2，3，4，5，6，7，8（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
   - `https://live.bilibili.com/48`的`room_id`为`48`。
   - `https://www.douyu.com/56229`的`room_id`为`56229`。
   - `https://www.youtube.com/channel/UClwRU9iNX7UbzyuVzvZTSkA/live`的`room_id`为`UClwRU9iNX7UbzyuVzvZTSkA`。
   - `https://www.yizhibo.com/member/personel/user_info?memberid=6009826`的`room_id`为`6009826`。
   - `https://tv.miguvideo.com/#/video/tv/550010583120181027002`的`room_id`为`550010583120181027002`。
+  - `https://h5.nf.migu.cn/app/v3/p/share/concert/home.html?id=24802271`（migu_music_1）的`room_id`为`24802271`。
+  - `http://m.music.migu.cn/v3/music/topic/12441`（migu_music_2）的`room_id`为`12441`。
 - 一个合法的 RTMP，HLS 或 HTTP-FLV 地址。
 
 ### Known bugs
