@@ -204,7 +204,7 @@ optional arguments:
 **在录制过程中按`q`可手动中止当前FFmpeg进程，按`Ctrl + C`即结束录制。**
 
 `arguments`的有效值为下列情形之一：
-- `platform` `room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，yizhibo，miguvideo，1，2，3，4，5，6（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
+- `platform` `room_id`两个参数，中间用英文逗号隔开。`platform`的有效值为48live，bilibili，douyu，youtube，yizhibo，migu_video，1，2，3，4，5，6（平台名称和数字一一等价）。`room_id`的有效值为snh，bej，gnz，shy，ckg或各平台的直播间ID。
   - `https://live.bilibili.com/48`的`room_id`为`48`。
   - `https://www.douyu.com/56229`的`room_id`为`56229`。
   - `https://www.youtube.com/channel/UClwRU9iNX7UbzyuVzvZTSkA/live`的`room_id`为`UClwRU9iNX7UbzyuVzvZTSkA`。

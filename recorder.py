@@ -112,7 +112,7 @@ def yizhibo(room_id):
     data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
     return data['url'].replace('http://','https://')
 
-def miguvideo(room_id):
+def migu_video(room_id):
     if room_id in ['snh','bej','gnz','shy','ckg']:
         return
     cmd=['phantomjs','miguvideo.js','https://tv.miguvideo.com/#/video/tv/%s'%room_id]
@@ -170,13 +170,13 @@ def main():
     platform_=None
     method=None
     args_=args.arguments.split(',')
-    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','miguvideo','1','2','3','4','5','6']:
+    if len(args_)==2 and args_[0] in ['48live','bilibili','douyu','youtube','yizhibo','migu_video','1','2','3','4','5','6']:
         platform_=args_[0]
         room_id=args_[1]
         if platform_ in ['1','2','3','4','5','6']:
-            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo','6':'miguvideo'}
+            real_platform={'1':'48live','2':'bilibili','3':'douyu','4':'youtube','5':'yizhibo','6':'migu_video'}
             platform_=real_platform[platform_]
-        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo,'miguvideo':miguvideo}
+        methods={'48live':live48,'bilibili':bilibili,'douyu':douyu,'youtube':youtube,'yizhibo':yizhibo,'migu_video':migu_video}
         method=methods.get(platform_)
     input=None
     has_interval=False
@@ -192,7 +192,7 @@ def main():
     error_pattern=re.compile(r'(Non-monotonous DTS in output stream \d+:\d+|DTS \d+ [\<\>] \d+ out of order|DTS \d+\, next:\d+ st:1 invalid dropping|missing picture in access unit with size \d+)')
     if args.remote is None:
         if platform_:
-            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','miguvideo':'MiguVideo'}
+            platforms={'48live':'48Live','bilibili':'Bilibili','douyu':'Douyu','youtube':'YouTube','yizhibo':'Yizhibo','migu_video':'MiguVideo'}
             platform_name=platforms[platform_]
             room_name='%s48'%room_id.upper() if room_id in ['snh','bej','gnz','shy','ckg'] else room_id
         else:
@@ -223,7 +223,7 @@ def main():
                 except FileNotFoundError:
                     if args.remote is None:
                         dir.rmdir()
-                    if method==miguvideo:
+                    if method==migu_video:
                         message='PhantomJS missing. See details on https://phantomjs.org/download.html\nAdding PhantomJS to PATH is recommended after downloading it.'
                     else:
                         message='Some required tools missing. Run \'pip install -U you-get youtube-dl\' to install them.'
@@ -277,7 +277,7 @@ def main():
                 output=args.remote
             cmd=['ffmpeg','-hide_banner','-y']
             user_agent=None
-            if method==miguvideo:
+            if method==migu_video:
                 user_agent=USER_AGENT
             elif args.user_agent:
                 user_agent=args.user_agent
