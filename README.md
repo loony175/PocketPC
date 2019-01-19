@@ -210,8 +210,8 @@ optional arguments:
   - `https://www.youtube.com/channel/UClwRU9iNX7UbzyuVzvZTSkA/live`的`room_id`为`UClwRU9iNX7UbzyuVzvZTSkA`。
   - `https://www.yizhibo.com/member/personel/user_info?memberid=6009826`的`room_id`为`6009826`。
   - `https://tv.miguvideo.com/#/video/tv/550010583120181027002`的`room_id`为`550010583120181027002`。
-  - `https://h5.nf.migu.cn/app/v3/p/share/concert/home.html?id=24802271`（migu_music_1）的`room_id`为`24802271`。
-  - `http://m.music.migu.cn/v3/music/topic/12441`（migu_music_2）的`room_id`为`12441`。
+  - `https://h5.nf.migu.cn/app/v3/p/share/concert/home.html?id=24802271`（**migu_music_1**）的`room_id`为`24802271`。
+  - `http://m.music.migu.cn/v3/music/topic/12441`（**migu_music_2**）的`room_id`为`12441`。
 - 一个合法的 RTMP，HLS 或 HTTP-FLV 地址。
 
 ### Known bugs
