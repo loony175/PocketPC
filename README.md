@@ -15,7 +15,7 @@ pip install -U -r requirements.txt
 ## Contents
 - [douyin.py](#douyinpy)
 - [member_id.py](#member_idpy)
-- [migu_video.py](#migu_videopy)
+- [migu.py](#migupy)
 - [modian.py](#modianpy)
 - [pocket.py](#pocketpy)
 - [pubed_time.py](#pubed_timepy)
@@ -78,15 +78,18 @@ optional arguments:
 
 执行时无需传入任何参数。一般情况下，没有任何输出则表示更新成功。
 
-## migu_video.py
-查询咪咕直播回放M3U8地址。
+## migu.py
+查询咪咕平台回放M3U8地址。
 
 ```
 positional arguments:
-  id  要查询的回放ID。
+  platform  要查询的平台，有效值为migu_video，migu_music_1，migu_music_2，1，2，3（平台名称和数字一一等价）。
+  id        要查询的回放ID。
 ```
 
-以`https://tv.miguvideo.com/#/video/tv/550010583120181027002`为例，`id`为`550010583120181027002`。
+- **migu_video**：以`https://tv.miguvideo.com/#/video/tv/550010583120181027002`为例，`id`为`550010583120181027002`。
+- **migu_music_1**：以`https://h5.nf.migu.cn/app/v3/p/share/concert/home.html?id=24802271`为例，`id`为`24802271`。
+- **migu_music_2**：以`http://m.music.migu.cn/v3/music/topic/12441`为例，`id`为`12441`。
 
 **本脚本的输出可直接作为[caterpillar](https://pypi.org/project/caterpillar-hls/)的输入。**
 

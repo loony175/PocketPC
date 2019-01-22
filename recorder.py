@@ -115,7 +115,7 @@ def yizhibo(room_id):
 def migu_video(room_id):
     if room_id in ['snh','bej','gnz','shy','ckg']:
         return
-    cmd=['phantomjs','miguvideo.js','https://tv.miguvideo.com/#/video/tv/%s'%room_id]
+    cmd=['phantomjs','migu_video.js','https://tv.miguvideo.com/#/video/tv/%s'%room_id]
     while True:
         try:
             data=json.loads(subprocess.check_output(cmd).decode('utf-8'))
