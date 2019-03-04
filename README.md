@@ -232,4 +232,4 @@ positional arguments:
   id          要查询的录播ID。
 ```
 
-以`http://live.bej48.com/Index/invedio/id/1`为例，`group_name`为`bej48`，`id`为`1`。
+以`https://live.48.cn/Index/invedio/club/1/id/1`为例，`group_name`为`snh48`，`id`为`1`。
