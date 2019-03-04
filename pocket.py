@@ -22,15 +22,22 @@ def request_process(is_review,last_time,group_id,member_id,limit):
         sub_title['base64']=base64.b64encode(dict['subTitle'].encode()).decode()
         info['subTitle']=sub_title
         info['picPath']=['https://source.48.cn%s'%obj for obj in dict['picPath'].split(',')]
+        datetime=arrow.get(dict['startTime']/1000).to('Asia/Shanghai')
         start_time={}
         start_time['timestamp']=dict['startTime']
-        start_time['datetime']=arrow.get(dict['startTime']/1000).to('Asia/Shanghai').strftime('%Y-%m-%dT%H:%M:%SZ')
+        start_time['datetime']=datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
         info['startTime']=start_time
         info['memberId']=dict['memberId']
         info['liveType']=dict['liveType']
         info['streamPath']=dict['streamPath'].replace('_wb480','')
-        if parse.urlparse(info['streamPath']).hostname!='alcdn.f01.xiaoka.tv':
+        hostname=parse.urlparse(info['streamPath']).hostname
+        if hostname!='alcdn.f01.xiaoka.tv':
             info['streamPath']=info['streamPath'].replace('http://','https://')
+        if hostname=='alcdn.hls.xiaoka.tv':
+            date=re.match(r'^.*/(\d{6,8})/.*$',info['streamPath']).group(1)
+            date_=datetime.format('YYYYMD')
+            if date_!=date:
+                info['streamPath']=info['streamPath'].replace(date,date_)
         intermediate.append(info)
     return intermediate
 
