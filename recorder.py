@@ -31,7 +31,7 @@ def live48(room_id,format,has_interval):
     elif format=='rtmp':
         protocol='rtmp'
         path=room_id_
-    return '%s://cyflv.ckg48.com/chaoqing/%s'%(protocol,path)
+    return '%s://cyflv.ckg48.com/gaoqing/%s'%(protocol,path)
 
 def bilibili(room_id,stream,has_interval):
     if has_interval:
@@ -58,14 +58,14 @@ def douyu(room_id):
         room_id_=room_ids[room_id]
     except KeyError:
         room_id_=room_id
-    cmd=['you-get','--json','https://www.douyu.com/%s'%room_id_]
+    cmd=['ykdl','-J','https://www.douyu.com/%s'%room_id_]
     while True:
         try:
-            data=subprocess.check_output(cmd).decode('utf-8')
+            data=json.loads(subprocess.check_output(cmd).decode('gb18030'))
             break
         except subprocess.CalledProcessError:
             time.sleep(5)
-    return re.search('(https?://.*\.flv[^\']*)',data).group(1).replace('http://','https://')
+    return data['streams'][data['stream_types'][0]]['src'][0]
 
 def youtube(room_id):
     room_ids={'snh':'UClwRU9iNX7UbzyuVzvZTSkA'}
