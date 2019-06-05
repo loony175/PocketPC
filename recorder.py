@@ -173,11 +173,11 @@ def migu_music_2(room_id):
     base_url='https://m.music.migu.cn/migu/remoting'
     while True:
         try:
-            resp=requests.get('%s/live_control_tag'%base_url,params={'pageid':room_id,'pagediv':'LIVE1'}).json()
-            data=resp['data']
-            if data['contentType']==10:
-                content_value=data['contentValue']
-                resp=requests.get('%s/get_music_playurl_tag'%base_url,params={'cid':content_value,'pid':2028593040,'rate':4}).json()
+            resp=requests.get('%s/live_play_tag'%base_url,params={'mapId':room_id}).json()
+            live_play_visual=resp['retMsg']['livePlayVisual'][0]
+            if live_play_visual['content']=='演唱会直播ID':
+                content_id=live_play_visual['contentId']
+                resp=requests.get('%s/get_music_playurl_tag'%base_url,params={'cid':content_id,'pid':2028593040,'rate':4}).json()
                 return resp['playurl']
             else:
                 logging.warning('[MiguMusic2] %s not online.'%room_id)

@@ -89,7 +89,7 @@ positional arguments:
 
 - **migu_video**：以`https://tv.miguvideo.com/#/video/tv/550010583120181027002`为例，`id`为`550010583120181027002`。
 - **migu_music_1**：以`https://h5.nf.migu.cn/app/v3/p/share/concert/home.html?id=24802271`为例，`id`为`24802271`。
-- **migu_music_2**：以`http://m.music.migu.cn/v3/music/topic/12441`为例，`id`为`12441`。
+- **migu_music_2**：以`http://m.music.migu.cn/v3/live/25470203`为例，`id`为`25470203`。
 
 **本脚本的输出可直接作为[caterpillar](https://pypi.org/project/caterpillar-hls/)的输入。**
 
@@ -214,7 +214,7 @@ optional arguments:
   - `https://www.yizhibo.com/member/personel/user_info?memberid=6009826`的`room_id`为`6009826`。
   - `https://tv.miguvideo.com/#/video/tv/550010583120181027002`的`room_id`为`550010583120181027002`。
   - `https://h5.nf.migu.cn/app/v3/p/share/concert/home.html?id=24802271`（**migu_music_1**）的`room_id`为`24802271`。
-  - `http://m.music.migu.cn/v3/music/topic/12441`（**migu_music_2**）的`room_id`为`12441`。
+  - `http://m.music.migu.cn/v3/live/25470203`（**migu_music_2**）的`room_id`为`25470203`。
 - 一个合法的 RTMP，HLS 或 HTTP-FLV 地址。
 
 ### Known bugs

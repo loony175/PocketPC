@@ -3,10 +3,12 @@
 import argparse
 import json
 import m3u8
+import pathlib
 import requests
 import subprocess
 import sys
-import urllib
+import urllib.error
+from urllib import parse
 
 def migu_video(id):
     cmd=['phantomjs','migu_video.js','https://tv.miguvideo.com/#/video/tv/%d'%id]
@@ -43,15 +45,22 @@ def migu_music_1(id):
 
 def migu_music_2(id):
     base_url='https://m.music.migu.cn/migu/remoting'
-    resp=requests.get('%s/live_control_tag'%base_url,params={'pageid':id,'pagediv':'LIVE1'}).json()
-    data=resp['data']
-    if data['contentType']==20:
-        content_value=data['contentValue'].split('&')
-        cid=content_value[0]
-        begin=content_value[1]
-        end=content_value[2]
-        resp=requests.get('%s/get_playbackurl_tag'%base_url,params={'cid':cid,'pid':2028593040,'rate':4,'begin':begin,'end':end}).json()
+    resp=requests.get('%s/live_play_tag'%base_url,params={'mapId':id}).json()
+    live_play_visual=resp['retMsg']['livePlayVisual'][0]
+    content_id=live_play_visual['contentId']
+    content=live_play_visual['content']
+    if content=='拉流':
+        ll_time=live_play_visual['llTime'].split('&')
+        begin=ll_time[0]
+        end=ll_time[1]
+        resp=requests.get('%s/get_playbackurl_tag'%base_url,params={'cid':content_id,'pid':2028593040,'rate':4,'begin':begin,'end':end}).json()
         return resp['playurl']
+    elif content=='MVID':
+        resp=requests.post('%s/mv_detail_tag'%base_url,data={'cpid':content_id}).json()
+        for entry in resp['data']['videoUrlMap']['entry']:
+            if entry['key'] in ['050012','050015']:
+                return entry['value']
+        return
     else:
         return
 
@@ -68,11 +77,14 @@ def main():
     method=methods.get(args.platform)
     url=method(args.id)
     if url:
-        try:
-            print(m3u8.load(url).playlists[0].absolute_uri)
-        except urllib.error.HTTPError as e:
-            print(e)
-            print('Maybe you are outside mainland China?')
+        if pathlib.Path(parse.urlparse(url).path).suffix=='.m3u8':
+            try:
+                print(m3u8.load(url).playlists[0].absolute_uri)
+            except urllib.error.HTTPError as e:
+                print(e)
+                print('Maybe you are outside mainland China?')
+        else:
+            print(url)
 
 if __name__=='__main__':
     main()
