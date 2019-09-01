@@ -46,7 +46,7 @@ def bilibili(room_id,stream,has_interval):
         try:
             resp=requests.get('%s/room_init'%base_url,params={'id':room_id_}).json()
             room_id_=str(resp['data']['room_id'])
-            resp=requests.get('%s/playUrl'%base_url,params={'cid':room_id_,'quality':0,'platform':'web'}).json()
+            resp=requests.get('%s/playUrl'%base_url,params={'cid':room_id_,'quality':4,'platform':'web'}).json()
             break
         except Exception as e:
             logging.warning('[Bilibili] %s: %s'%(room_id_,e))
@@ -314,7 +314,7 @@ def main():
                 output=args.remote
             cmd=['ffmpeg','-hide_banner','-y']
             user_agent=None
-            if method==migu_video:
+            if method in [bilibili,migu_video]:
                 user_agent=USER_AGENT
             elif args.user_agent:
                 user_agent=args.user_agent
