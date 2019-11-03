@@ -15,7 +15,7 @@ import sys
 import time
 from urllib import parse
 
-USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
+USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70 Safari/537.36'
 
 def live48(room_id,format,has_interval):
     if has_interval:
@@ -260,9 +260,10 @@ def main():
                     if args.remote is None:
                         dir.rmdir()
                     if method==migu_video:
-                        message='PhantomJS missing. See details on https://phantomjs.org/download.html\nAdding PhantomJS to PATH is recommended after downloading it.'
+                        message='''PhantomJS missing. See details on https://phantomjs.org/download.html
+                        Adding PhantomJS to PATH is recommended after downloading it.'''
                     else:
-                        message='Some required tools missing. Run \'pip install -U you-get youtube-dl\' to install them.'
+                        message="Some required tools missing. Run 'pip install -U you-get youtube-dl' to install them."
                     sys.exit(message)
                 if input is None:
                     if args.remote is None:
@@ -331,7 +332,8 @@ def main():
             except FileNotFoundError:
                 if args.remote is None:
                     dir.rmdir()
-                sys.exit('FFmpeg missing. See details on https://ffmpeg.org/download.html\nAdding FFmpeg to PATH is recommended after downloading it.')
+                sys.exit('''FFmpeg missing. See details on https://ffmpeg.org/download.html
+                Adding FFmpeg to PATH is recommended after downloading it.''')
             if args.remote is None and args.log:
                 f=open(log,'w')
             current_size=0
