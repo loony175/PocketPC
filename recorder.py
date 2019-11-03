@@ -45,12 +45,12 @@ def bilibili(room_id,stream,has_interval):
     while True:
         try:
             resp=requests.get('%s/room_init'%base_url,params={'id':room_id_}).json()
-            room_id_=str(resp['data']['room_id'])
-            resp=requests.get('%s/playUrl'%base_url,params={'cid':room_id_,'quality':4,'platform':'web'}).json()
+            real_room_id=str(resp['data']['room_id'])
+            resp=requests.get('%s/playUrl'%base_url,params={'cid':real_room_id,'quality':4,'platform':'web'}).json()
             break
         except Exception as e:
             logging.warning('[Bilibili] %s: %s'%(room_id_,e))
-    return resp['data']['durl'][stream]['url']
+    return resp['data']['durl'][stream]['url'],room_id_
 
 def douyu(room_id):
     room_ids={'snh':'56229','bej':'668687','gnz':'668530','shy':'1536837','ckg':'3532048'}
@@ -248,12 +248,11 @@ def main():
                         if input is None or now-begin_time>=21600:
                             input=method(room_id)
                             begin_time=int(time.time())
-                    elif method in [live48,bilibili]:
-                        if method==live48:
-                            spec_arg=args.offi_format
-                        elif method==bilibili:
-                            spec_arg=args.bili_stream
-                        input=method(room_id,spec_arg,has_interval)
+                    elif method==live48:
+                        input=method(room_id,args.offi_format,has_interval)
+                        has_interval=False
+                    elif method==bilibili:
+                        input,room_id_=method(room_id,args.bili_stream,has_interval)
                         has_interval=False
                     else:
                         input=method(room_id)
@@ -320,6 +319,8 @@ def main():
                 user_agent=args.user_agent
             if user_agent:
                 cmd.extend(['-user_agent',user_agent])
+            if method==bilibili:
+                cmd.extend(['-referer','https://live.bilibili.com/%s'%room_id_])
             cmd.extend(['-i',input,'-c','copy'])
             if args.remote is None:
                 cmd.extend([output.as_posix()])
